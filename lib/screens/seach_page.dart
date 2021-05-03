@@ -244,6 +244,7 @@ class _SearchPageState extends State<SearchPage> {
                     child: Column(
                       children: [
                         ButtonTheme(
+                          key: Key('Suburb Dropdown'),
                           alignedDropdown: true,
                           child: DropdownSearch<String>(
                             key: _suburbKey,
@@ -298,6 +299,7 @@ class _SearchPageState extends State<SearchPage> {
               padding: EdgeInsets.only(top: con.maxHeight * 0.02),
               child: Center(
                 child: ElevatedButton(
+                  key: Key('Search Button'),
                   child: Text(
                     'Search',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

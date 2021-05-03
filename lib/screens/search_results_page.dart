@@ -74,6 +74,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
         elevation: 0,
         actions: [
           IconButton(
+            key: Key('Favourite Button'),
               icon: (_favourite) ? Icon(Icons.star) : Icon(Icons.star_border_outlined),
               onPressed: () {
                 _favouriteSearch(widget.searchParams);
@@ -121,8 +122,11 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
           )
         : (fuelStationsToday.length != 0)
             ? ListView.separated(
-                itemCount: fuelStationsToday.length,
+                itemCount: fuelStationsToday.length + 1,
                 itemBuilder: (context, index) {
+                  if (index == fuelStationsToday.length) { //adds separator icon after last item
+                    return Container();
+                  }
                   return _buildTile(con, index, fuelStationsToday[index]);
                 },
                 separatorBuilder: (context, index) {
@@ -149,8 +153,11 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
           )
         : (fuelStationsTomorrow.length != 0)
             ? ListView.separated(
-                itemCount: fuelStationsTomorrow.length,
+                itemCount: fuelStationsTomorrow.length + 1,
                 itemBuilder: (context, index) {
+                  if (index == fuelStationsTomorrow.length) {
+                    return Container();
+                  }
                   return _buildTile(con, index, fuelStationsTomorrow[index]);
                 },
                 separatorBuilder: (context, index) {
