@@ -73,6 +73,7 @@ class _HomePageState extends State<HomePage> {
                     _pageIndex = index;
                   });
                 },
+                selectedItemColor: Colors.black,
                 selectedIconTheme: IconThemeData(color: ThemeColor.mainColor),
                 items: [
                   BottomNavigationBarItem(

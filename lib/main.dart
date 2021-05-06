@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:wa_fuel/resources.dart';
@@ -71,11 +72,18 @@ Future<void> executeBackgroundTask() async {
 
   Database database = await DBHelper().getFavouritesDatabase();
 
-  List<Map> favouriteDBList = await database.rawQuery('SELECT * FROM ${Resources.dbFavourites}');
+  List<Map> favouriteDBList =
+      await database.rawQuery('SELECT * FROM ${Resources.dbFavourites} WHERE ${Resources.dbPushNotification} = ?', [1]);
+
+  int notificationIndex = 1;
+
+  if (favouriteDBList.length > 1) {
+    await showGroupNotification(notificationsPlugin);
+  }
 
   for (Map favourite in favouriteDBList) {
     Favourite favouriteInstance = Favourite.fromDatabase(favourite);
-    final todayStations = await FuelWatchService.getFuelStations(favouriteInstance.searchParams);
+    final todayStations = await FuelWatchService.getFuelStationsToday(favouriteInstance.searchParams);
     favouriteInstance.addTodayStations(todayStations);
 
     final tomorrowStation = await FuelWatchService.getFuelStationsTomorrow(favouriteInstance.searchParams);
@@ -83,25 +91,53 @@ Future<void> executeBackgroundTask() async {
 
     await showNotification(
         notificationsPlugin,
+        notificationIndex,
         favouriteInstance.searchParams.getLocation(),
         Resources.productsShort[favouriteInstance.searchParams.productValue],
         favouriteInstance.todayPrice,
         favouriteInstance.tomorrowPrice);
+
+    notificationIndex++;
   }
   return;
 }
 
 ///Sends notification
-Future<void> showNotification(FlutterLocalNotificationsPlugin notificationsPlugin, String locationName, String product,
-    String todayPrice, String tomorrowPrice) async {
+Future<void> showNotification(FlutterLocalNotificationsPlugin notificationsPlugin, int id, String locationName,
+    String product, String todayPrice, String tomorrowPrice) async {
+  String changeIcon = '';
+  try {
+    double today = double.parse(todayPrice);
+    double tomorrow = double.parse(tomorrowPrice);
+    if (today < tomorrow) {
+      changeIcon = '\u25B2';
+    } else if (today > tomorrow) {
+      changeIcon = '\u25BC';
+    }
+  } catch (_) {}
+
   const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      '0', 'Daily Fuel Notifications', 'Notifications of saved fuel searches when tomorrows\' prices are available.',
-      importance: Importance.defaultImportance, priority: Priority.defaultPriority, showWhen: false);
+      '0', 'Fuel Notifications', 'Notifications of saved fuel searches when tomorrows\' prices are available.',
+      groupKey: 'FuelNotification', playSound: false);
   const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
-  await notificationsPlugin.show(
-      0, '$locationName - $product', 'Today: $todayPrice - Tomorrow: $tomorrowPrice', platformChannelSpecifics,
-      payload: '');
+  await notificationsPlugin.show(id, '$locationName - $product',
+      'Today: $todayPrice - $changeIcon Tomorrow: $tomorrowPrice', platformChannelSpecifics);
   return;
+}
+
+/// Send Group Summary notification
+Future<void> showGroupNotification(FlutterLocalNotificationsPlugin notificationsPlugin) async {
+  DateFormat dateFormat = DateFormat('dd:MM:yyyy', 'en_US');
+  InboxStyleInformation inboxStyleInformation = InboxStyleInformation(
+    [],
+    contentTitle: 'WA Fuel Prices - ${dateFormat.format(DateTime.now())}',
+  );
+  AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      '0', 'Fuel Notifications', 'Notifications of saved fuel searches when tomorrows\' prices are available.',
+      styleInformation: inboxStyleInformation, groupKey: 'FuelNotification', setAsGroupSummary: true);
+  NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+  await notificationsPlugin.show(
+      0, 'WA Fuel Prices - ${dateFormat.format(DateTime.now())}', '', platformChannelSpecifics);
 }
 
 ///Calculates how long to wait until first notification should be sent, so that it will be sent at 2:30pm

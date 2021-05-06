@@ -8,9 +8,8 @@ import 'package:wa_fuel/models/fuel_station.dart';
 ///CLASS: FuelWatchService
 ///Gets fuel price data from RSS feed
 class FuelWatchService {
-
   ///Gets today's fuel prices
-  static Future<List<FuelStation>> getFuelStations(SearchParams searchParams) async {
+  static Future<List<FuelStation>> getFuelStationsToday(SearchParams searchParams) async {
     var baseUrl = 'www.fuelwatch.wa.gov.au';
     try {
       final client = http.Client();

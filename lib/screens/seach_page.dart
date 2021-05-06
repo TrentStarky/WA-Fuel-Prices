@@ -312,7 +312,7 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                   onPressed: () async {
                     _formKey.currentState.save();
-                    var fuelStationsTodayFuture = FuelWatchService.getFuelStations(searchParams);
+                    var fuelStationsTodayFuture = FuelWatchService.getFuelStationsToday(searchParams);
                     var fuelStationsTomorrowFuture = FuelWatchService.getFuelStationsTomorrow(searchParams);
                     Navigator.push(
                       context,
