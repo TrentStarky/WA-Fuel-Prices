@@ -19,21 +19,26 @@ class SingleFavouritePage extends StatefulWidget {
 class _SingleFavouritePageState extends State<SingleFavouritePage> {
   bool _pushNotif;
   double _fontSize = 16;
+  int _radioGroupValue;
 
   ///init variables
   @override
   void initState() {
     _pushNotif = false;
+    _radioGroupValue = 1;
     _getNotificationSetting().then((value) {
       setState(() {
-        _pushNotif = value;
+        if (value == 2) {
+          _radioGroupValue = 2;
+        }
+        _pushNotif = (value != 0);
       });
     });
     super.initState();
   }
 
   ///Check database for push notification value
-  Future<bool> _getNotificationSetting() async {
+  Future<int> _getNotificationSetting() async {
     Database database = await DBHelper().getFavouritesDatabase();
     List<Map> returnVal = await database.rawQuery(
         'SELECT ${Resources.dbPushNotification} FROM ${Resources.dbFavourites} WHERE ${Resources.dbProduct} = ? AND  ${Resources.dbBrand} = ? AND ${Resources.dbRegion} = ? AND ${Resources.dbSuburb} = ? AND ${Resources.dbIncludeSurrounding} = ?',
@@ -45,9 +50,9 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
           widget.favourite.searchParams.includeSurrounding ? 1 : 0
         ]);
     if (returnVal.length == 1) {
-      return (returnVal[0]['${Resources.dbPushNotification}'] != 0) ? true : false;
+      return returnVal[0]['${Resources.dbPushNotification}'];
     }
-    return false;
+    return 0;
   }
 
   @override
@@ -127,17 +132,8 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
                   value: _pushNotif,
                   onChanged: (switchValue) async {
                     ///Update push notification value in database
-                    Database database = await DBHelper().getFavouritesDatabase();
-                    database.rawUpdate(
-                        'UPDATE ${Resources.dbFavourites} SET ${Resources.dbPushNotification} = ? WHERE ${Resources.dbProduct} = ? AND  ${Resources.dbBrand} = ? AND ${Resources.dbRegion} = ? AND ${Resources.dbSuburb} = ? AND ${Resources.dbIncludeSurrounding} = ?',
-                        [
-                          switchValue ? 1 : 0,
-                          widget.favourite.searchParams.productValue,
-                          widget.favourite.searchParams.brandValue,
-                          widget.favourite.searchParams.regionValue,
-                          widget.favourite.searchParams.suburbValue,
-                          widget.favourite.searchParams.includeSurrounding ? 1 : 0
-                        ]);
+                    _updateNotificationInDatabase(switchValue ? 1 : 0);
+                    _radioGroupValue = 1;
                     setState(() {
                       _pushNotif = switchValue;
                     });
@@ -145,6 +141,34 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
                 ),
               ],
             ),
+            (_pushNotif)
+                ? Column(
+                    children: [
+                      RadioListTile(
+                        value: 1,
+                        groupValue: _radioGroupValue,
+                        onChanged: (radioValue) {
+                          setState(() {
+                            _radioGroupValue = radioValue;
+                            _updateNotificationInDatabase(1);
+                          });
+                        },
+                        title: Text('Daily updates'),
+                      ),
+                      RadioListTile(
+                        value: 2,
+                        groupValue: _radioGroupValue,
+                        onChanged: (radioValue) {
+                          setState(() {
+                            _radioGroupValue = radioValue;
+                            _updateNotificationInDatabase(2);
+                          });
+                        },
+                        title: Text('Only on price increases'),
+                      ),
+                    ],
+                  )
+                : Container(),
             Center(
               child: Padding(
                 padding: const EdgeInsets.only(top: 16.0),
@@ -177,5 +201,19 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
         ),
       ),
     );
+  }
+
+  void _updateNotificationInDatabase(int notificationValue) async {
+    Database database = await DBHelper().getFavouritesDatabase();
+    database.rawUpdate(
+        'UPDATE ${Resources.dbFavourites} SET ${Resources.dbPushNotification} = ? WHERE ${Resources.dbProduct} = ? AND  ${Resources.dbBrand} = ? AND ${Resources.dbRegion} = ? AND ${Resources.dbSuburb} = ? AND ${Resources.dbIncludeSurrounding} = ?',
+        [
+          notificationValue,
+          widget.favourite.searchParams.productValue,
+          widget.favourite.searchParams.brandValue,
+          widget.favourite.searchParams.regionValue,
+          widget.favourite.searchParams.suburbValue,
+          widget.favourite.searchParams.includeSurrounding ? 1 : 0
+        ]);
   }
 }

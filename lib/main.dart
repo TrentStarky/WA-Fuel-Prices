@@ -72,14 +72,10 @@ Future<void> executeBackgroundTask() async {
 
   Database database = await DBHelper().getFavouritesDatabase();
 
-  List<Map> favouriteDBList =
-      await database.rawQuery('SELECT * FROM ${Resources.dbFavourites} WHERE ${Resources.dbPushNotification} = ?', [1]);
+  List<Map> favouriteDBList = await database
+      .rawQuery('SELECT * FROM ${Resources.dbFavourites} WHERE ${Resources.dbPushNotification} IN (?, ?)', [1, 2]);
 
   int notificationIndex = 1;
-
-  if (favouriteDBList.length > 1) {
-    await showGroupNotification(notificationsPlugin);
-  }
 
   for (Map favourite in favouriteDBList) {
     Favourite favouriteInstance = Favourite.fromDatabase(favourite);
@@ -88,6 +84,14 @@ Future<void> executeBackgroundTask() async {
 
     final tomorrowStation = await FuelWatchService.getFuelStationsTomorrow(favouriteInstance.searchParams);
     favouriteInstance.addTomorrowStations(tomorrowStation);
+
+    if (favourite[Resources.dbPushNotification] == 2) {
+      try {
+        if (double.parse(favouriteInstance.todayPrice) >= double.parse(favouriteInstance.tomorrowPrice)) {
+          continue;
+        }
+      } catch (_) {}
+    }
 
     await showNotification(
         notificationsPlugin,
@@ -98,6 +102,10 @@ Future<void> executeBackgroundTask() async {
         favouriteInstance.tomorrowPrice);
 
     notificationIndex++;
+  }
+
+  if (notificationIndex > 2) {
+    await showGroupNotification(notificationsPlugin);
   }
   return;
 }
