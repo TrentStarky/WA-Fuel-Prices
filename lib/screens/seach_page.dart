@@ -1,6 +1,7 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:wa_fuel/models/search_params.dart';
 import 'package:wa_fuel/resources.dart';
 import 'package:wa_fuel/style.dart';
@@ -29,6 +30,12 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     searchParams = SearchParams();
     selectedArea = SelectedArea.none;
+
+    var keyboardVisibilityController = KeyboardVisibilityController();
+    keyboardVisibilityController.onChange.listen((bool visible) {
+      setState(() {
+      });
+    });
     super.initState();
   }
 
@@ -178,6 +185,7 @@ class _SearchPageState extends State<SearchPage> {
                           alignedDropdown: true,
                           child: DropdownSearch<String>(
                             key: _regionKey,
+                            emptyBuilder: (context, temp) => Scaffold(body:Center(child: Text('No locations found'),),),
                             mode: Mode.BOTTOM_SHEET,
                             showClearButton: true,
                             showSearchBox: true,
@@ -248,6 +256,7 @@ class _SearchPageState extends State<SearchPage> {
                           alignedDropdown: true,
                           child: DropdownSearch<String>(
                             key: _suburbKey,
+                            emptyBuilder: (context, temp) => Scaffold(body:Center(child: Text('No locations found'),),),
                             mode: Mode.BOTTOM_SHEET,
                             showClearButton: true,
                             showSearchBox: true,

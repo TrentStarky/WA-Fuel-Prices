@@ -32,10 +32,12 @@ dependencies:
   flutter_local_notifications: ^5.0.0+1
   workmanager: ^0.2.3
   searchable_dropdown: ^1.1.3
-  dropdown_search: ^0.5.0
+  dropdown_search: #^0.6.1 #- can't use until they fix keyboard overlapping bottom sheet search bar
+    path: ./local-plugins/dropdown_search-0.6.1-local
   sqflite: ^2.0.0+3
   introduction_screen: ^2.1.0
   intl: ^0.17.0
+  flutter_keyboard_visibility: ^5.0.1
 
   cupertino_icons: ^0.1.3
 
