@@ -50,7 +50,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
 
     for (Map favourite in list) {
       Favourite favouriteItem = Favourite.fromDatabase(favourite);
-      stationListFutures.add(FuelWatchService.getFuelStations(favouriteItem.searchParams));
+      stationListFutures.add(FuelWatchService.getFuelStationsToday(favouriteItem.searchParams));
       stationListFutures.add(FuelWatchService.getFuelStationsTomorrow(favouriteItem.searchParams));
       returnList.add(favouriteItem);
     }

@@ -17,6 +17,20 @@ class FuelStation {
 
   FuelStation._();
 
+  FuelStation(String brand, String date, String price, String tradingName, String locationName, String address,
+      String phone, String latitude, String longitude, String siteFeatures) {
+    this.brand = brand;
+    this.date = date;
+    this.price = price;
+    this.tradingName = tradingName;
+    this.locationName = locationName;
+    this.address = address;
+    this.phone = phone;
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.siteFeatures = siteFeatures;
+  }
+
   FuelStation.fromRssFeed(XmlElement element) {
     FuelStation._();
 
