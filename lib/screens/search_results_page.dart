@@ -182,7 +182,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
             Navigator.push(context, MaterialPageRoute(builder: (context) => SingleStationPage(station: fuelStation))),
         child: Container(
           child: SizedBox(
-            height: (_textSizeCalc(fuelStation.tradingName, TextStyle(fontSize: 20), 2, con.maxWidth * 0.6).height  + _textSizeCalc(fuelStation.tradingName, TextStyle(fontSize: 20), 1, con.maxWidth * 0.6).height) + 5,
+            height: (_textSizeCalc(fuelStation.tradingName, TextStyle(fontSize: 20), 2, con.maxWidth * 0.6).height  + _textSizeCalc('${fuelStation.address}, ${fuelStation.locationName}', TextStyle(), 1, con.maxWidth * 0.6).height) + 10,
             child: Row(
               children: [
                 Expanded(
@@ -230,9 +230,10 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
         ));
   }
 
+  ///Calculates height of text (over multiple lines of text if necessary)
   Size _textSizeCalc(String text, TextStyle style, int maxLines, double maxWidth) {
     final TextPainter textPainter = TextPainter(
-        text: TextSpan(text: text, style: style), maxLines: maxLines, textDirection: TextDirection.ltr)
+        text: TextSpan(text: text, style: style), maxLines: maxLines, textDirection: TextDirection.ltr, textScaleFactor: 0.9)
       ..layout(minWidth: 0, maxWidth: maxWidth);
     return textPainter.size;
   }

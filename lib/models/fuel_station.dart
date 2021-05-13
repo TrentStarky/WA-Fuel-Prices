@@ -21,7 +21,7 @@ class FuelStation {
       String phone, String latitude, String longitude, String siteFeatures) {
     this.brand = brand;
     this.date = date;
-    this.price = price;
+    this.price = _ensureDecimal(price);
     this.tradingName = tradingName;
     this.locationName = locationName;
     this.address = address;
@@ -36,7 +36,7 @@ class FuelStation {
 
     brand = RssParser().findFirstElement(element, 'brand')?.text;
     date = RssParser().findFirstElement(element, 'date')?.text;
-    price = RssParser().findFirstElement(element, 'price')?.text;
+    price = _ensureDecimal(RssParser().findFirstElement(element, 'price')?.text);
     tradingName = RssParser().findFirstElement(element, 'trading-name')?.text;
     locationName = RssParser().findFirstElement(element, 'location')?.text;
     address = RssParser().findFirstElement(element, 'address')?.text;
@@ -44,5 +44,18 @@ class FuelStation {
     latitude = RssParser().findFirstElement(element, 'latitude')?.text;
     longitude = RssParser().findFirstElement(element, 'longitude')?.text;
     siteFeatures = RssParser().findFirstElement(element, 'site-features')?.text;
+  }
+
+  ///Adds a '.0' to values that don't have a decimal from the feed for nicer formatting
+  String _ensureDecimal(String value) {
+    try {
+      var num = double.parse(value);
+      if (num % 1 == 0) {
+        return value + '.0';
+      }
+      return value;
+    } catch (_) {
+      return value;
+    }
   }
 }
