@@ -129,10 +129,11 @@ class _SelectDialogState<T> extends State<SelectDialog<T>> {
     bool isTablet = deviceSize.width > deviceSize.height;
     double maxHeight = deviceSize.height * (isTablet ? .8 : .6);
     double maxWidth = deviceSize.width * (isTablet ? .7 : .9);
+    double? providedHeight = (widget.maxHeight != null) ? widget.maxHeight! + MediaQuery.of(context).viewInsets.bottom : null;
 
     return Container(
       width: widget.dialogMaxWidth ?? maxWidth,
-      constraints: BoxConstraints(maxHeight: widget.maxHeight ?? maxHeight),
+      constraints: BoxConstraints(maxHeight: providedHeight ?? maxHeight),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
