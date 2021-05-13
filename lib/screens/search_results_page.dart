@@ -182,7 +182,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
             Navigator.push(context, MaterialPageRoute(builder: (context) => SingleStationPage(station: fuelStation))),
         child: Container(
           child: SizedBox(
-            height: con.maxHeight * 0.1,
+            height: (_textSizeCalc(fuelStation.tradingName, TextStyle(fontSize: 20), 2, con.maxWidth * 0.6).height  + _textSizeCalc(fuelStation.tradingName, TextStyle(fontSize: 20), 1, con.maxWidth * 0.6).height) + 5,
             child: Row(
               children: [
                 Expanded(
@@ -206,7 +206,8 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
                               Text(
                                 '${fuelStation.tradingName}',
                                 style: TextStyle(fontSize: 20),
-                                overflow: TextOverflow.fade,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                               Text(
                                 '${fuelStation.address}, ${fuelStation.locationName}',
@@ -227,6 +228,13 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
             ),
           ),
         ));
+  }
+
+  Size _textSizeCalc(String text, TextStyle style, int maxLines, double maxWidth) {
+    final TextPainter textPainter = TextPainter(
+        text: TextSpan(text: text, style: style), maxLines: maxLines, textDirection: TextDirection.ltr)
+      ..layout(minWidth: 0, maxWidth: maxWidth);
+    return textPainter.size;
   }
 
   ///Adds/removes this search to the favourites database

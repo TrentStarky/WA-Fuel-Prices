@@ -56,6 +56,26 @@ class _InformationPageState extends State<InformationPage> {
               ),
             ),
             Padding(
+              padding: EdgeInsets.only(top: 24.0),
+              child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                    text: 'Found an issue or have a suggestion? Contact us at: ',
+                    style: TextStyle(color: Colors.black),
+                    children: [
+                      TextSpan(
+                          text: 'wafuel@starsoftware.dev',
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () async {
+                              if (await canLaunch('mailto:wafuel@starsoftware.dev?subject=WA%20Fuel%20Contact')) {
+                                launch('mailto:wafuel@starsoftware.dev?subject=WA%20Fuel%20Contact');
+                              }
+                            })
+                    ]),
+              ),
+            ),
+            Padding(
               padding: const EdgeInsets.only(top: 24.0),
               child: Text('Made with \u2764 by Trent'),
             )
