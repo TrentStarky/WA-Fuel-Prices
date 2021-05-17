@@ -46,7 +46,7 @@ class FuelStation {
     siteFeatures = RssParser().findFirstElement(element, 'site-features')?.text;
   }
 
-  ///Adds a '.0' to values that don't have a decimal from the feed for nicer formatting
+  ///Adds a '.0' to values that don't have a decimal from the feed for better formatting
   String _ensureDecimal(String value) {
     try {
       var num = double.parse(value);
