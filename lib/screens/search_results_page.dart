@@ -233,7 +233,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
   ///Calculates height of text (over multiple lines of text if necessary)
   Size _textSizeCalc(String text, TextStyle style, int maxLines, double maxWidth) {
     final TextPainter textPainter = TextPainter(
-        text: TextSpan(text: text, style: style), maxLines: maxLines, textDirection: TextDirection.ltr, textScaleFactor: 0.9)
+        text: TextSpan(text: text, style: style), maxLines: maxLines, textDirection: TextDirection.ltr, textScaleFactor: MediaQuery.of(context).textScaleFactor)
       ..layout(minWidth: 0, maxWidth: maxWidth);
     return textPainter.size;
   }

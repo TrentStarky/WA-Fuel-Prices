@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:sqflite/sqflite.dart';
 
 import '../resources.dart';
@@ -19,6 +20,11 @@ class DBHelper {
     if (this._favouritesDatabase == null) {
       var databasePath = await getDatabasesPath();
       String path = databasePath + 'favourites_db.db';
+
+      ///TODO: temporary fix
+      if (Platform.isIOS) {
+        path = databasePath + '/favourites_db.db';
+      }
 
       Database database = await openDatabase(path, version: 1, onCreate: (Database db, int version) async {
         await db.execute(

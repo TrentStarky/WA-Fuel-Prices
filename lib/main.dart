@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -54,20 +56,51 @@ void callbackDispatcher() {
         await executeBackgroundTask();
         break;
       case Workmanager.iOSBackgroundTask:
-
-        ///TODO iOS background notifications
-        print('iOS background fetch delegate ran');
+        if (await needToRunBackgroundTasks()) {
+          executeBackgroundTask();
+        }
         break;
     }
     return Future.value(true);
   });
 }
 
-///Gets stations that need to have a notification sent, gets RSS data and sends notification
+///For iOS, checks if need to get data and send notification (after 2:30pm once daily)
+Future<bool> needToRunBackgroundTasks() async {
+  DateTime timeNow = DateTime.now();
+  DateTime timeToRun = DateTime(timeNow.year, timeNow.month, timeNow.day, 2, 30);
+  int lastRunMilliseconds;
+  var prefs = await SharedPreferences.getInstance();
+  try {
+    lastRunMilliseconds = prefs.getInt(Resources.dbLastBackgroundRun);
+    if (lastRunMilliseconds == null) {
+      if (timeNow.isAfter(timeToRun)) {
+        prefs.setInt(Resources.dbLastBackgroundRun, timeNow.millisecondsSinceEpoch);
+        return true;
+      } else {
+        return false;
+      }
+    }
+  } catch (_) {
+    print(_);
+  }
+
+  DateTime lastRun = DateTime.fromMillisecondsSinceEpoch(lastRunMilliseconds);
+
+  if (timeNow.isAfter(timeToRun) && lastRun.isBefore(timeToRun)) {
+    prefs.setInt(Resources.dbLastBackgroundRun, timeNow.millisecondsSinceEpoch);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+///Gets stations that need to have a notification sent, requests RSS data and sends notification
 Future<void> executeBackgroundTask() async {
   FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
   AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('ic_fuel');
-  InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
+  IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings(onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+  InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
   notificationsPlugin.initialize(initializationSettings);
 
   Database database = await DBHelper().getFavouritesDatabase();
@@ -104,10 +137,32 @@ Future<void> executeBackgroundTask() async {
     notificationIndex++;
   }
 
-  if (notificationIndex > 2) {
+  if (notificationIndex > 2 && Platform.isAndroid) {
     await showGroupNotification(notificationsPlugin);
   }
   return;
+}
+
+Future onDidReceiveLocalNotification(int id, String title, String body, String payload) async {
+  // showDialog(context: context, builder: (BuildContext context) => CupertinoAlertDialog(
+  //   title: Text(title),
+  //   content: Text(body),
+  //   actions: [
+  //     CupertinoDialogAction(
+  //       isDefaultAction: true,
+  //       child: Text('Ok'),
+  //       onPressed: () async {
+  //         Navigator.of(context, rootNavigator: true).pop();
+  //         await Navigator.push(
+  //           context,
+  //           MaterialPageRoute(builder: (context) => SecondScreen(payload),
+  //           ),
+  //         );
+  //       },
+  //
+  //     )
+  //   ],
+  // ));
 }
 
 ///Sends notification
@@ -127,7 +182,8 @@ Future<void> showNotification(FlutterLocalNotificationsPlugin notificationsPlugi
   const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       '0', 'Fuel Notifications', 'Notifications of saved fuel searches when tomorrows\' prices are available.',
       groupKey: 'FuelNotification', playSound: false);
-  const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+  const IOSNotificationDetails iosPlatformChannelSpecifics = IOSNotificationDetails(threadIdentifier: 'wa-fuel');
+  const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iosPlatformChannelSpecifics);
   await notificationsPlugin.show(id, '$locationName - $product',
       'Today: $todayPrice - $changeIcon Tomorrow: $tomorrowPrice', platformChannelSpecifics);
   return;
