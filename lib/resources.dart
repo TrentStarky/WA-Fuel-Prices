@@ -573,6 +573,7 @@ class Resources {
   static final String dbPushNotification = 'push_notification';
   static final String dbFirstRun = 'first_run';
   static final String dbNotificationsEnabled = 'notifications';
+  static final dbLastBackgroundRun = 'last_background_run';
 }
 
 ///EXAMPLE RSS ITEM:

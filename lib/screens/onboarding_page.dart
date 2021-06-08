@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/widgets.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:wa_fuel/style.dart';
 
@@ -30,7 +33,20 @@ class _OnboardingPageState extends State<OnboardingPage> {
         next: Text('Next'),
         done: Text('Finish'),
         onDone: () {
-          Navigator.pop(context);
+          if (Platform.isIOS) { //need to ask for notification permissions now on iOS
+            FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+            flutterLocalNotificationsPlugin
+                .resolvePlatformSpecificImplementation
+            <IOSFlutterLocalNotificationsPlugin>()?.requestPermissions(
+              alert: true,
+              badge: true,
+              sound: true,
+            )?.then((result) {
+              Navigator.pop(context);
+            });
+          } else {
+            Navigator.pop(context);
+          }
         },
         dotsDecorator: DotsDecorator(activeColor: ThemeColor.mainColor),
         pages: [
