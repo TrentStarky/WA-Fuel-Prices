@@ -122,12 +122,8 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
                   )
                 : Container(),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  'Enable push notifications? ',
-                  style: TextStyle(fontSize: _fontSize),
-                ),
                 Switch(
                   value: _pushNotif,
                   onChanged: (switchValue) async {
@@ -138,6 +134,14 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
                       _pushNotif = switchValue;
                     });
                   },
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  child: Text(
+                    'Enable push notifications? ',
+                    style: TextStyle(fontSize: _fontSize),
+                    maxLines: 2,
+                  ),
                 ),
               ],
             ),
@@ -171,7 +175,7 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
                 : Container(),
             Center(
               child: Padding(
-                padding: const EdgeInsets.only(top: 16.0),
+                padding: const EdgeInsets.only(top: 48.0),
                 child: ElevatedButton(
                   onPressed: () async {
                     ///Remove favourite from database
@@ -189,6 +193,7 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                    elevation: MaterialStateProperty.all<double>(0.0),
                   ),
                   child: Text(
                     'Delete Favourite',

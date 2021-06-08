@@ -6,10 +6,13 @@ import 'package:wa_fuel/models/fuel_station.dart';
 import 'package:wa_fuel/resources.dart';
 import 'package:wa_fuel/screens/single_favourite_page.dart';
 import 'package:wa_fuel/screens/single_station_page.dart';
+import 'package:wa_fuel/services/text_size_calculator.dart';
 import 'package:wa_fuel/services/database_helper.dart';
 import 'package:wa_fuel/services/fuelwatch_service.dart';
 import 'package:wa_fuel/services/painter.dart';
 import 'package:wa_fuel/style.dart';
+
+//TODO: height of station list tile is hardcoded
 
 ///CLASS: FavouritesPage
 ///Displays favourited searches with current prices
@@ -267,9 +270,15 @@ class _FavouriteListItemState extends State<FavouriteListItem> with TickerProvid
                       'Today',
                       style: ThemeText.textNormal,
                     ),
-                    (displayDayValue == DisplayDay.today)
-                        ? Icon(Icons.keyboard_arrow_up)
-                        : Icon(Icons.keyboard_arrow_down),
+                    Padding(
+                      padding: EdgeInsets.only(top: 4.0),
+                      child: Container(
+                        decoration: ShapeDecoration(shape: CircleBorder(side: BorderSide())),
+                        child: (displayDayValue == DisplayDay.today)
+                            ? Icon(Icons.keyboard_arrow_up)
+                            : Icon(Icons.keyboard_arrow_down),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -305,9 +314,15 @@ class _FavouriteListItemState extends State<FavouriteListItem> with TickerProvid
                       'Tomorrow',
                       style: ThemeText.textNormal,
                     ),
-                    (displayDayValue == DisplayDay.tomorrow)
-                        ? Icon(Icons.keyboard_arrow_up)
-                        : Icon(Icons.keyboard_arrow_down),
+                    Padding(
+                      padding: EdgeInsets.only(top: 4.0),
+                      child: Container(
+                        decoration: ShapeDecoration(shape: CircleBorder(side: BorderSide())),
+                        child: (displayDayValue == DisplayDay.tomorrow)
+                            ? Icon(Icons.keyboard_arrow_up)
+                            : Icon(Icons.keyboard_arrow_down),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -409,7 +424,11 @@ class _FavouriteListItemState extends State<FavouriteListItem> with TickerProvid
       numToRender = 1;
     }
 
-    return 50.0 * numToRender;
+    return ((TextSizeCalculator.calculate('Pq', TextStyle(fontWeight: FontWeight.bold), 1, double.infinity,
+                    MediaQuery.textScaleFactorOf(context))
+                .height +
+            35) *
+        numToRender);
   }
 }
 
@@ -434,7 +453,9 @@ class StationListTile extends StatelessWidget {
           Navigator.push(context, MaterialPageRoute(builder: (context) => SingleStationPage(station: station)));
         },
         child: SizedBox(
-          height: 16,
+          height: TextSizeCalculator.calculate('Pq', TextStyle(fontWeight: FontWeight.bold), 1, double.infinity,
+                  MediaQuery.textScaleFactorOf(context))
+              .height,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
@@ -457,7 +478,10 @@ class StationListTile extends StatelessWidget {
                     ],
                   ),
                 ),
-                Icon(Icons.arrow_right),
+                Icon(
+                  Icons.arrow_right,
+                  size: 20,
+                ),
               ],
             ),
           ),
@@ -487,7 +511,10 @@ class MainStationListTile extends StationListTile {
           Navigator.push(context, MaterialPageRoute(builder: (context) => SingleStationPage(station: station)));
         },
         child: SizedBox(
-          height: 20,
+          height: TextSizeCalculator.calculate('Pq', TextStyle(fontWeight: FontWeight.bold), 1, double.infinity,
+                      MediaQuery.textScaleFactorOf(context))
+                  .height +
+              5, //20,
           child: Align(
             alignment: Alignment.centerLeft,
             child: Padding(
@@ -508,7 +535,10 @@ class MainStationListTile extends StationListTile {
                       ],
                     ),
                   ),
-                  Icon(Icons.arrow_right),
+                  Icon(
+                    Icons.arrow_right,
+                    size: 20,
+                  ),
                 ],
               ),
             ),

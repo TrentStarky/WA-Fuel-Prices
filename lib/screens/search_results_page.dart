@@ -7,6 +7,7 @@ import 'package:wa_fuel/models/fuel_station.dart';
 import 'package:wa_fuel/models/search_params.dart';
 import 'package:wa_fuel/resources.dart';
 import 'package:wa_fuel/screens/single_station_page.dart';
+import 'package:wa_fuel/services/text_size_calculator.dart';
 import 'package:wa_fuel/services/database_helper.dart';
 import 'package:wa_fuel/style.dart';
 
@@ -182,7 +183,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
             Navigator.push(context, MaterialPageRoute(builder: (context) => SingleStationPage(station: fuelStation))),
         child: Container(
           child: SizedBox(
-            height: (_textSizeCalc(fuelStation.tradingName, TextStyle(fontSize: 20), 2, con.maxWidth * 0.6).height  + _textSizeCalc('${fuelStation.address}, ${fuelStation.locationName}', TextStyle(), 1, con.maxWidth * 0.6).height) + 10,
+            height: (TextSizeCalculator.calculate(fuelStation.tradingName, TextStyle(fontSize: 20), 2, con.maxWidth * 0.6, MediaQuery.of(context).textScaleFactor).height  + TextSizeCalculator.calculate('${fuelStation.address}, ${fuelStation.locationName}', TextStyle(), 1, con.maxWidth * 0.6, MediaQuery.of(context).textScaleFactor).height) + 10,
             child: Row(
               children: [
                 Expanded(
@@ -228,14 +229,6 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
             ),
           ),
         ));
-  }
-
-  ///Calculates height of text (over multiple lines of text if necessary)
-  Size _textSizeCalc(String text, TextStyle style, int maxLines, double maxWidth) {
-    final TextPainter textPainter = TextPainter(
-        text: TextSpan(text: text, style: style), maxLines: maxLines, textDirection: TextDirection.ltr, textScaleFactor: MediaQuery.of(context).textScaleFactor)
-      ..layout(minWidth: 0, maxWidth: maxWidth);
-    return textPainter.size;
   }
 
   ///Adds/removes this search to the favourites database
