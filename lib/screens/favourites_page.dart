@@ -70,7 +70,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
     return LayoutBuilder(
       builder: (ctx, con) => (favouritesList == null)
           ? Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(color: ThemeColor.mainColor),
             )
           : (favouritesList.length == 0)
               ? Center(
@@ -242,6 +242,9 @@ class _FavouriteListItemState extends State<FavouriteListItem> with TickerProvid
             controller: controller,
             tabs: [
               TextButton(
+                style: ButtonStyle(
+                  splashFactory: NoSplash.splashFactory,
+                ),
                 onPressed: () {
                   setState(() {
                     if (displayDayValue != DisplayDay.today) {
@@ -274,6 +277,9 @@ class _FavouriteListItemState extends State<FavouriteListItem> with TickerProvid
                 ),
               ),
               TextButton(
+                style: ButtonStyle(
+                  splashFactory: NoSplash.splashFactory,
+                ),
                 onPressed: () {
                   setState(() {
                     if (displayDayValue != DisplayDay.tomorrow) {
@@ -426,6 +432,7 @@ class StationListTile extends StatelessWidget {
       width: double.infinity,
       child: TextButton(
         style: ButtonStyle(
+          splashFactory: NoSplash.splashFactory,
             minimumSize: MaterialStateProperty.all<Size>(Size(double.infinity, 16)),
             backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
             shape: MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(
@@ -480,6 +487,7 @@ class MainStationListTile extends StationListTile {
       width: double.infinity,
       child: TextButton(
         style: ButtonStyle(
+          splashFactory: NoSplash.splashFactory,
             backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
             shape: MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(
                 side: BorderSide(width: 2), borderRadius: BorderRadius.all(Radius.circular(20))))),
@@ -504,7 +512,11 @@ class MainStationListTile extends StationListTile {
                         VerticalDivider(
                           color: Colors.black,
                         ),
-                        Text('${station.tradingName}'),
+                        Flexible(
+                            child: Text(
+                              '${station.tradingName}',
+                              overflow: TextOverflow.ellipsis,
+                            )),
                       ],
                     ),
                   ),
