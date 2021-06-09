@@ -119,7 +119,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
   Widget _buildTodaySearch(Constraints con) {
     return (fuelStationsToday == null)
         ? Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(color: ThemeColor.mainColor),
           )
         : (fuelStationsToday.length != 0)
             ? ListView.separated(
@@ -150,7 +150,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
   Widget _buildTomorrowSearch(Constraints con) {
     return (fuelStationsTomorrow == null)
         ? Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(color: ThemeColor.mainColor),
           )
         : (fuelStationsTomorrow.length != 0)
             ? ListView.separated(

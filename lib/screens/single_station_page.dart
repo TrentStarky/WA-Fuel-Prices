@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -24,18 +26,17 @@ class _SingleStationPageState extends State<SingleStationPage>  {
       appBar: AppBar(
         title: Text(widget.station.tradingName),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: ListView(
         children: [
           Column(
             children: [
               Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text(widget.station.tradingName, style: ThemeText.textStationTitle,),
+                child: Text(widget.station.tradingName, style: ThemeText.textStationTitle, textAlign: TextAlign.center,),
               ),
               Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text('${widget.station.address}, ${widget.station.locationName}', style: ThemeText.textStationNormal,),
+                child: Text('${widget.station.address}, ${widget.station.locationName}', style: ThemeText.textStationNormal, textAlign: TextAlign.center,),
               ),
               Padding(
                 padding: EdgeInsets.all(8.0),
@@ -55,6 +56,11 @@ class _SingleStationPageState extends State<SingleStationPage>  {
                 child: SizedBox(
                   height: 300,
                   child: GoogleMap(
+                    gestureRecognizers: {
+                      Factory<OneSequenceGestureRecognizer>(
+                          () => EagerGestureRecognizer()
+                      )
+                    },
                     rotateGesturesEnabled: true,
                     scrollGesturesEnabled: true,
                     initialCameraPosition: CameraPosition(

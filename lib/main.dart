@@ -23,14 +23,16 @@ void main() {
     //Check if notifications have been set up
     if (prefs.getBool(Resources.dbNotificationsEnabled) == null || !prefs.getBool(Resources.dbNotificationsEnabled)) {
       Workmanager.initialize(callbackDispatcher);
-      Workmanager.registerPeriodicTask(
-        'dailyFuelUpdate',
-        'getFavouritesTomorrowPrices',
-        existingWorkPolicy: ExistingWorkPolicy.replace,
-        constraints: Constraints(),
-        frequency: Duration(days: 1),
-        initialDelay: calculateDelay(),
-      );
+      if (Platform.isAndroid) {
+        Workmanager.registerPeriodicTask(
+          'dailyFuelUpdate',
+          'getFavouritesTomorrowPrices',
+          existingWorkPolicy: ExistingWorkPolicy.replace,
+          constraints: Constraints(),
+          frequency: Duration(days: 1),
+          initialDelay: calculateDelay(),
+        );
+      }
       prefs.setBool(Resources.dbNotificationsEnabled, true);
     }
   });
@@ -43,7 +45,8 @@ void main() {
         textButtonTheme: TextButtonThemeData(
             style: ButtonStyle(
           foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-        ))),
+        )),
+    ),
     home: HomePage(),
   ));
 }
