@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:wa_fuel/models/favourite.dart';
 import 'package:wa_fuel/models/fuel_station.dart';
@@ -12,7 +13,8 @@ import 'package:wa_fuel/services/fuelwatch_service.dart';
 import 'package:wa_fuel/services/painter.dart';
 import 'package:wa_fuel/style.dart';
 
-//TODO: height of station list tile is hardcoded
+//TODO: Add proper bloc state management
+//TODO: Add error message when FuelWatch RSS feed is inaccessible so users know the issue is not with the app
 
 ///CLASS: FavouritesPage
 ///Displays favourited searches with current prices
@@ -23,18 +25,26 @@ class FavouritesPage extends StatefulWidget {
 
 class _FavouritesPageState extends State<FavouritesPage> {
   List<Favourite> favouritesList;
+  RefreshController _refreshController;
 
   ///Load saved favourites then get current prices
   @override
   void initState() {
-    _getFavouritesFromDatabase().then((list) {
-      _getFavouritesPrices(list).then((finalList) {
-        setState(() {
-          favouritesList = finalList;
-        });
-      });
-    });
+    _refreshController = RefreshController();
+
+    _getData();
     super.initState();
+  }
+
+  ///Gets data for UI
+  Future<void> _getData() async {
+    var favourites = await _getFavouritesFromDatabase();
+    var finalList = await _getFavouritesPrices(favourites);
+    setState(() {
+      favouritesList = finalList;
+    });
+
+    return;
   }
 
   ///Gets favourites from database
@@ -86,26 +96,34 @@ class _FavouritesPageState extends State<FavouritesPage> {
                     ),
                   ),
                 )
-              : ListView.builder(
-                  itemBuilder: (context, index) => Column(
-                    children: [
-                      ///Add padding to top of first item
-                      (index == 0)
-                          ? SizedBox(
-                              height: con.maxWidth * 0.025,
-                            )
-                          : Container(),
-                      SizedBox(
-                        width: con.maxWidth * 0.95,
-                        child: FavouriteListItem(
-                            favouritesList[index], () => setState(() => favouritesList.removeAt(index))),
-                      ),
-                      SizedBox(
-                        height: con.maxWidth * 0.025,
-                      ),
-                    ],
+              : SmartRefresher(
+                  controller: _refreshController,
+                  header: ClassicHeader(),
+                  onRefresh: () async {
+                    await _getData();
+                    _refreshController.refreshCompleted();
+                    },
+                  child: ListView.builder(
+                    itemBuilder: (context, index) => Column(
+                      children: [
+                        ///Add padding to top of first item
+                        (index == 0)
+                            ? SizedBox(
+                                height: con.maxWidth * 0.025,
+                              )
+                            : Container(),
+                        SizedBox(
+                          width: con.maxWidth * 0.95,
+                          child: FavouriteListItem(
+                              favouritesList[index], () => setState(() => favouritesList.removeAt(index))),
+                        ),
+                        SizedBox(
+                          height: con.maxWidth * 0.025,
+                        ),
+                      ],
+                    ),
+                    itemCount: favouritesList.length,
                   ),
-                  itemCount: favouritesList.length,
                 ),
     );
   }
@@ -167,6 +185,7 @@ class _FavouriteListItemState extends State<FavouriteListItem> with TickerProvid
                     child: Text(
                       '${widget.itemInstance.searchParams.getLocation()}',
                       style: ThemeText.textTileHeader,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
@@ -451,7 +470,7 @@ class StationListTile extends StatelessWidget {
       width: double.infinity,
       child: TextButton(
         style: ButtonStyle(
-          splashFactory: NoSplash.splashFactory,
+            splashFactory: NoSplash.splashFactory,
             minimumSize: MaterialStateProperty.all<Size>(Size(double.infinity, 16)),
             backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
             shape: MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(
@@ -511,7 +530,7 @@ class MainStationListTile extends StationListTile {
       width: double.infinity,
       child: TextButton(
         style: ButtonStyle(
-          splashFactory: NoSplash.splashFactory,
+            splashFactory: NoSplash.splashFactory,
             backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
             shape: MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(
                 side: BorderSide(width: 2), borderRadius: BorderRadius.all(Radius.circular(20))))),
@@ -541,9 +560,9 @@ class MainStationListTile extends StationListTile {
                         ),
                         Flexible(
                             child: Text(
-                              '${station.tradingName}',
-                              overflow: TextOverflow.ellipsis,
-                            )),
+                          '${station.tradingName}',
+                          overflow: TextOverflow.ellipsis,
+                        )),
                       ],
                     ),
                   ),

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -12,60 +13,88 @@ import 'package:wa_fuel/resources.dart';
 import 'package:wa_fuel/services/database_helper.dart';
 import 'package:wa_fuel/services/fuelwatch_service.dart';
 import 'package:wa_fuel/style.dart';
-import 'package:workmanager/workmanager.dart';
 
 import 'models/favourite.dart';
 import 'screens/home_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SharedPreferences.getInstance().then((prefs) {
-    //Check if notifications have been set up
-    if (prefs.getBool(Resources.dbNotificationsEnabled) == null || !prefs.getBool(Resources.dbNotificationsEnabled)) {
-      Workmanager.initialize(callbackDispatcher);
-      if (Platform.isAndroid) {
-        Workmanager.registerPeriodicTask(
-          'dailyFuelUpdate',
-          'getFavouritesTomorrowPrices',
-          existingWorkPolicy: ExistingWorkPolicy.replace,
-          constraints: Constraints(),
-          frequency: Duration(days: 1),
-          initialDelay: calculateDelay(),
-        );
-      }
-      prefs.setBool(Resources.dbNotificationsEnabled, true);
-    }
-  });
 
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    theme: ThemeData(
-        primaryColor: ThemeColor.mainColor,
-        accentColor: ThemeColor.mainColor,
-        textButtonTheme: TextButtonThemeData(
-            style: ButtonStyle(
-          foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-        )),
-    ),
-    home: HomePage(),
-  ));
+  runApp(MyApp());
+
+  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
 }
 
-///Executed when app is run in the background
-void callbackDispatcher() {
-  Workmanager.executeTask((taskName, inputData) async {
-    switch (taskName) {
-      case 'getFavouritesTomorrowPrices':
-        await executeBackgroundTask();
-        break;
-      case Workmanager.iOSBackgroundTask:
-        if (await needToRunBackgroundTasks()) {
-          executeBackgroundTask();
-        }
-        break;
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => new _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    initPlatformState();
+  }
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> initPlatformState() async {
+    // Configure BackgroundFetch.
+    int status = await BackgroundFetch.configure(
+        BackgroundFetchConfig(
+            minimumFetchInterval: 120,
+            stopOnTerminate: false,
+            enableHeadless: true,
+            requiresBatteryNotLow: false,
+            requiresCharging: false,
+            requiresStorageNotLow: false,
+            requiresDeviceIdle: false,
+            requiredNetworkType: NetworkType.ANY,
+        ),
+        _eventHandler,
+        _timeoutHandler,
+    );
+    print('[BackgroundFetch] configure success: $status');
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+  }
+
+  _eventHandler(String taskId) async {
+    // This is the fetch-event callback.
+    print("[BackgroundFetch] Event received $taskId");
+
+    if (await needToRunBackgroundTasks()) {
+      await executeBackgroundTask();
     }
-    return Future.value(true);
-  });
+
+    // IMPORTANT:  You must signal completion of your task or the OS can punish your app
+    // for taking too long in the background.
+    BackgroundFetch.finish(taskId);
+  }
+
+  _timeoutHandler(String taskId) async {
+    // This task has exceeded its allowed running-time.  You must stop what you're doing and immediately .finish(taskId)
+    print("[BackgroundFetch] TASK TIMEOUT taskId: $taskId");
+    BackgroundFetch.finish(taskId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+          primaryColor: ThemeColor.mainColor,
+          accentColor: ThemeColor.mainColor,
+          textButtonTheme: TextButtonThemeData(
+              style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+          ))),
+      home: HomePage(),
+    );
+  }
 }
 
 ///For iOS, checks if need to get data and send notification (after 2:30pm once daily)
@@ -102,8 +131,10 @@ Future<bool> needToRunBackgroundTasks() async {
 Future<void> executeBackgroundTask() async {
   FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
   AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('ic_fuel');
-  IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings(onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-  InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+  IOSInitializationSettings initializationSettingsIOS =
+      IOSInitializationSettings(onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+  InitializationSettings initializationSettings =
+      InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
   notificationsPlugin.initialize(initializationSettings);
 
   Database database = await DBHelper().getFavouritesDatabase();
@@ -186,7 +217,8 @@ Future<void> showNotification(FlutterLocalNotificationsPlugin notificationsPlugi
       '0', 'Fuel Notifications', 'Notifications of saved fuel searches when tomorrows\' prices are available.',
       groupKey: 'FuelNotification', playSound: false);
   const IOSNotificationDetails iosPlatformChannelSpecifics = IOSNotificationDetails(threadIdentifier: 'wa-fuel');
-  const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iosPlatformChannelSpecifics);
+  const NotificationDetails platformChannelSpecifics =
+      NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iosPlatformChannelSpecifics);
   await notificationsPlugin.show(id, '$locationName - $product',
       'Today: $todayPrice - $changeIcon Tomorrow: $tomorrowPrice', platformChannelSpecifics);
   return;
@@ -225,4 +257,21 @@ Duration calculateDelay() {
   Duration duration = targetTime.difference(timeNow);
 
   return duration;
+}
+
+// [Android-only] This "Headless Task" is run when the Android app
+// is terminated with enableHeadless: true
+void backgroundFetchHeadlessTask(HeadlessTask task) async {
+  String taskId = task.taskId;
+  bool isTimeout = task.timeout;
+  if (isTimeout) {
+    // This task has exceeded its allowed running-time.
+    // You must stop what you're doing and immediately .finish(taskId)
+    print("[BackgroundFetch] Headless task timed-out: $taskId");
+    BackgroundFetch.finish(taskId);
+    return;
+  }
+  print('[BackgroundFetch] Headless event received.');
+  // Do your work here...
+  BackgroundFetch.finish(taskId);
 }
