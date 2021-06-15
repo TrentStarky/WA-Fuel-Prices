@@ -100,7 +100,7 @@ class _MyAppState extends State<MyApp> {
 ///For iOS, checks if need to get data and send notification (after 2:30pm once daily)
 Future<bool> needToRunBackgroundTasks() async {
   DateTime timeNow = DateTime.now();
-  DateTime timeToRun = DateTime(timeNow.year, timeNow.month, timeNow.day, 2, 30);
+  DateTime timeToRun = DateTime(timeNow.year, timeNow.month, timeNow.day, 14, 30);
   int lastRunMilliseconds;
   var prefs = await SharedPreferences.getInstance();
   try {
