@@ -102,7 +102,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
                   onRefresh: () async {
                     await _getData();
                     _refreshController.refreshCompleted();
-                    },
+                  },
                   child: ListView.builder(
                     itemBuilder: (context, index) => Column(
                       children: [
@@ -392,13 +392,7 @@ class _FavouriteListItemState extends State<FavouriteListItem> with TickerProvid
         );
         break;
       case ChangeIcon.steady:
-        return Padding(
-          padding: EdgeInsets.only(right: 4.0),
-          child: CustomPaint(
-            painter: DashPainter(fillColor: Colors.black),
-            size: Size(15, 15),
-          ),
-        );
+        return Container();
         break;
       default:
         return Container();

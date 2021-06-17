@@ -178,18 +178,20 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
                 padding: const EdgeInsets.only(top: 48.0),
                 child: ElevatedButton(
                   onPressed: () async {
-                    ///Remove favourite from database
-                    Database database = await DBHelper().getFavouritesDatabase();
-                    database.rawUpdate(
-                        'DELETE FROM ${Resources.dbFavourites} WHERE ${Resources.dbProduct} = ? AND  ${Resources.dbBrand} = ? AND ${Resources.dbRegion} = ? AND ${Resources.dbSuburb} = ? AND ${Resources.dbIncludeSurrounding} = ?',
-                        [
-                          widget.favourite.searchParams.productValue,
-                          widget.favourite.searchParams.brandValue,
-                          widget.favourite.searchParams.regionValue,
-                          widget.favourite.searchParams.suburbValue,
-                          widget.favourite.searchParams.includeSurrounding ? 1 : 0
-                        ]);
-                    Navigator.pop(context, true);
+                    if (await _confirmDeletion()) {
+                      ///Remove favourite from database
+                      Database database = await DBHelper().getFavouritesDatabase();
+                      database.rawUpdate(
+                          'DELETE FROM ${Resources.dbFavourites} WHERE ${Resources.dbProduct} = ? AND  ${Resources.dbBrand} = ? AND ${Resources.dbRegion} = ? AND ${Resources.dbSuburb} = ? AND ${Resources.dbIncludeSurrounding} = ?',
+                          [
+                            widget.favourite.searchParams.productValue,
+                            widget.favourite.searchParams.brandValue,
+                            widget.favourite.searchParams.regionValue,
+                            widget.favourite.searchParams.suburbValue,
+                            widget.favourite.searchParams.includeSurrounding ? 1 : 0
+                          ]);
+                      Navigator.pop(context, true);
+                    }
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
@@ -220,5 +222,24 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
           widget.favourite.searchParams.suburbValue,
           widget.favourite.searchParams.includeSurrounding ? 1 : 0
         ]);
+  }
+
+  Future<bool> _confirmDeletion() async {
+    return await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Text('Are you sure?'),
+                  actions: [
+                    TextButton(
+                      child: Text('Delete'),
+                      onPressed: () => Navigator.of(context).pop(true),
+                    ),
+                    TextButton(
+                      child: Text('Cancel'),
+                      onPressed: () => Navigator.of(context).pop(false),
+                    )
+                  ],
+                )) ??
+        false;
   }
 }
