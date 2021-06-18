@@ -19,7 +19,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<FuelStation> fuelStationList = [];
-  Widget _page;
   List<Widget> _pageOptions;
   int _pageIndex = 0;
 
@@ -27,7 +26,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     _pageOptions = [FavouritesPage(), SearchPage()];
-    _page = FavouritesPage();
 
     //Show on-boarding page if first run
     SharedPreferences.getInstance().then((prefs) {
@@ -63,13 +61,15 @@ class _HomePageState extends State<HomePage> {
         body: Column(
           children: [
             Expanded(
-              child: _page,
+              child: IndexedStack(
+                index: _pageIndex,
+                children: _pageOptions,
+              ),
             ),
             BottomNavigationBar(
                 currentIndex: _pageIndex,
                 onTap: (index) {
                   setState(() {
-                    _page = _pageOptions[index];
                     _pageIndex = index;
                   });
                 },
