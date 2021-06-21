@@ -1,9 +1,8 @@
+import 'package:http/http.dart' as http;
+import 'package:wa_fuel/models/fuel_station.dart';
 import 'package:wa_fuel/models/search_params.dart';
 import 'package:wa_fuel/resources.dart';
 import 'package:wa_fuel/services/rss_parser.dart';
-
-import 'package:http/http.dart' as http;
-import 'package:wa_fuel/models/fuel_station.dart';
 
 ///CLASS: FuelWatchService
 ///Gets fuel price data from RSS feed

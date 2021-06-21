@@ -33,8 +33,7 @@ class _SearchPageState extends State<SearchPage> {
 
     var keyboardVisibilityController = KeyboardVisibilityController();
     keyboardVisibilityController.onChange.listen((bool visible) {
-      setState(() {
-      });
+      setState(() {});
     });
     super.initState();
   }
@@ -185,12 +184,22 @@ class _SearchPageState extends State<SearchPage> {
                           alignedDropdown: true,
                           child: DropdownSearch<String>(
                             key: _regionKey,
-                            emptyBuilder: (context, temp) => Scaffold(body:Center(child: Text('No locations found'),),),
+                            emptyBuilder: (context, temp) => Scaffold(
+                              body: Center(
+                                child: Text('No locations found'),
+                              ),
+                            ),
                             mode: Mode.BOTTOM_SHEET,
                             showClearButton: true,
                             showSearchBox: true,
                             enabled: (selectedArea != SelectedArea.suburb),
                             hint: '--All Regions--',
+                            searchBoxDecoration: InputDecoration(
+                                hintText: 'Search...',
+                                hintStyle: TextStyle(color: Colors.grey),
+                                contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
+                                border: OutlineInputBorder(),
+                            ),
                             items: Resources.regionsStringToRss.keys.toList(),
                             onChanged: (value) {
                               if (value == null || value == '0') {
@@ -256,12 +265,22 @@ class _SearchPageState extends State<SearchPage> {
                           alignedDropdown: true,
                           child: DropdownSearch<String>(
                             key: _suburbKey,
-                            emptyBuilder: (context, temp) => Scaffold(body:Center(child: Text('No locations found'),),),
+                            emptyBuilder: (context, temp) => Scaffold(
+                              body: Center(
+                                child: Text('No locations found'),
+                              ),
+                            ),
                             mode: Mode.BOTTOM_SHEET,
                             showClearButton: true,
                             showSearchBox: true,
                             enabled: (selectedArea != SelectedArea.region),
                             hint: '--Any Suburb--',
+                            searchBoxDecoration: InputDecoration(
+                              hintText: 'Search...',
+                              hintStyle: TextStyle(color: Colors.grey),
+                              contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
+                              border: OutlineInputBorder(),
+                            ),
                             items: Resources.suburbs,
                             onChanged: (value) {
                               if (value == null || value == 'Any Suburb') {

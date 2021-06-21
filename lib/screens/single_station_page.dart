@@ -19,7 +19,7 @@ class SingleStationPage extends StatefulWidget {
   _SingleStationPageState createState() => _SingleStationPageState();
 }
 
-class _SingleStationPageState extends State<SingleStationPage>  {
+class _SingleStationPageState extends State<SingleStationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,11 +32,19 @@ class _SingleStationPageState extends State<SingleStationPage>  {
             children: [
               Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text(widget.station.tradingName, style: ThemeText.textStationTitle, textAlign: TextAlign.center,),
+                child: Text(
+                  widget.station.tradingName,
+                  style: ThemeText.textStationTitle,
+                  textAlign: TextAlign.center,
+                ),
               ),
               Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text('${widget.station.address}, ${widget.station.locationName}', style: ThemeText.textStationNormal, textAlign: TextAlign.center,),
+                child: Text(
+                  '${widget.station.address}, ${widget.station.locationName}',
+                  style: ThemeText.textStationNormal,
+                  textAlign: TextAlign.center,
+                ),
               ),
               Padding(
                 padding: EdgeInsets.all(8.0),
@@ -44,7 +52,10 @@ class _SingleStationPageState extends State<SingleStationPage>  {
                   onPressed: () {
                     _launchTel(widget.station.phone);
                   },
-                    child: Text(widget.station.phone, style: ThemeText.textStationNormal,),
+                  child: Text(
+                    widget.station.phone,
+                    style: ThemeText.textStationNormal,
+                  ),
                 ),
               ),
             ],
@@ -56,11 +67,7 @@ class _SingleStationPageState extends State<SingleStationPage>  {
                 child: SizedBox(
                   height: 300,
                   child: GoogleMap(
-                    gestureRecognizers: {
-                      Factory<OneSequenceGestureRecognizer>(
-                          () => EagerGestureRecognizer()
-                      )
-                    },
+                    gestureRecognizers: {Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer())},
                     rotateGesturesEnabled: true,
                     scrollGesturesEnabled: true,
                     initialCameraPosition: CameraPosition(
@@ -82,9 +89,13 @@ class _SingleStationPageState extends State<SingleStationPage>  {
                   ),
                 ),
               ),
-              TextButton(child: Text('Get Directions'), onPressed: () {
-                MapsLauncher.launchCoordinates(double.parse(widget.station.latitude), double.parse(widget.station.longitude));
-              },)
+              TextButton(
+                child: Text('Get Directions'),
+                onPressed: () {
+                  MapsLauncher.launchCoordinates(
+                      double.parse(widget.station.latitude), double.parse(widget.station.longitude));
+                },
+              )
             ],
           ),
         ],

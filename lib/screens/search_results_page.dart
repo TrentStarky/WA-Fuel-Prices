@@ -2,13 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:wa_fuel/models/app_state.dart';
+import 'package:wa_fuel/models/favourite.dart';
 import 'package:wa_fuel/models/fuel_station.dart';
 import 'package:wa_fuel/models/search_params.dart';
 import 'package:wa_fuel/resources.dart';
 import 'package:wa_fuel/screens/single_station_page.dart';
-import 'package:wa_fuel/services/text_size_calculator.dart';
 import 'package:wa_fuel/services/database_helper.dart';
+import 'package:wa_fuel/services/text_size_calculator.dart';
 import 'package:wa_fuel/style.dart';
 
 ///CLASS: SearchResultsPage
@@ -75,7 +78,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
         elevation: 0,
         actions: [
           IconButton(
-            key: Key('Favourite Button'),
+              key: Key('Favourite Button'),
               icon: (_favourite) ? Icon(Icons.star) : Icon(Icons.star_border_outlined),
               onPressed: () {
                 _favouriteSearch(widget.searchParams);
@@ -119,13 +122,14 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
   Widget _buildTodaySearch(Constraints con) {
     return (fuelStationsToday == null)
         ? Center(
-            child: CircularProgressIndicator(color: ThemeColor.mainColor),
+            child: CircularProgressIndicator(),
           )
         : (fuelStationsToday.length != 0)
             ? ListView.separated(
                 itemCount: fuelStationsToday.length + 1,
                 itemBuilder: (context, index) {
-                  if (index == fuelStationsToday.length) { //adds separator icon after last item
+                  if (index == fuelStationsToday.length) {
+                    //adds separator icon after last item
                     return Container();
                   }
                   return _buildTile(con, index, fuelStationsToday[index]);
@@ -150,7 +154,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
   Widget _buildTomorrowSearch(Constraints con) {
     return (fuelStationsTomorrow == null)
         ? Center(
-            child: CircularProgressIndicator(color: ThemeColor.mainColor),
+            child: CircularProgressIndicator(),
           )
         : (fuelStationsTomorrow.length != 0)
             ? ListView.separated(
@@ -183,7 +187,13 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
             Navigator.push(context, MaterialPageRoute(builder: (context) => SingleStationPage(station: fuelStation))),
         child: Container(
           child: SizedBox(
-            height: (TextSizeCalculator.calculate(fuelStation.tradingName, TextStyle(fontSize: 20), 2, con.maxWidth * 0.6, MediaQuery.of(context).textScaleFactor).height  + TextSizeCalculator.calculate('${fuelStation.address}, ${fuelStation.locationName}', TextStyle(), 1, con.maxWidth * 0.6, MediaQuery.of(context).textScaleFactor).height) + 10,
+            height: (TextSizeCalculator.calculate(fuelStation.tradingName, TextStyle(fontSize: 20), 2,
+                            con.maxWidth * 0.6, MediaQuery.of(context).textScaleFactor)
+                        .height +
+                    TextSizeCalculator.calculate('${fuelStation.address}, ${fuelStation.locationName}', TextStyle(), 1,
+                            con.maxWidth * 0.6, MediaQuery.of(context).textScaleFactor)
+                        .height) +
+                10,
             child: Row(
               children: [
                 Expanded(
@@ -240,9 +250,12 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
     Database database = await DBHelper().getFavouritesDatabase();
 
     if (_favourite) {
+      Provider.of<AppState>(context, listen: false).add(Favourite.fromSearchParams(searchParameters
+          .copy())); //need to deep copy searchParams so that changes to the searchParam on the search page won't update the searchParams in the favourite
       await database.rawInsert(
           'INSERT INTO ${Resources.dbFavourites}(${Resources.dbProduct}, ${Resources.dbBrand}, ${Resources.dbRegion}, ${Resources.dbSuburb}, ${Resources.dbIncludeSurrounding}, ${Resources.dbPushNotification}) VALUES(${searchParameters.productValue}, ${searchParameters.brandValue}, ${searchParameters.regionValue}, \'${searchParameters.suburbValue}\', ${searchParameters.includeSurrounding ? 1 : 0}, 0)');
     } else {
+      Provider.of<AppState>(context, listen: false).remove(Favourite.fromSearchParams(searchParameters));
       await database.rawDelete(
           'DELETE FROM favourites WHERE ${Resources.dbProduct} = ? AND ${Resources.dbBrand} = ? AND ${Resources.dbRegion} = ? AND ${Resources.dbSuburb} = ? AND ${Resources.dbIncludeSurrounding} = ?',
           [

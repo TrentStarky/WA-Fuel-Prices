@@ -1,5 +1,6 @@
 import 'package:wa_fuel/models/fuel_station.dart';
 import 'package:wa_fuel/models/search_params.dart';
+
 import '../resources.dart';
 
 ///CLASS: FavouriteInfoItem
@@ -17,6 +18,11 @@ class Favourite {
   Favourite.fromDatabase(Map databaseMap) {
     Favourite._();
     this.searchParams = SearchParams.fromDatabase(databaseMap);
+  }
+
+  Favourite.fromSearchParams(SearchParams searchParams) {
+    Favourite._();
+    this.searchParams = searchParams;
   }
 
   ///Updates station list, today price and icon if possible

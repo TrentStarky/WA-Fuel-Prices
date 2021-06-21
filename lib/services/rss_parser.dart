@@ -19,11 +19,11 @@ class RssParser {
   }
 
   XmlElement findFirstElement(
-      XmlNode node,
-      String name, {
-        bool recursive = false,
-        String namespace,
-      }) {
+    XmlNode node,
+    String name, {
+    bool recursive = false,
+    String namespace,
+  }) {
     try {
       return findElements(node, name, recursive: recursive, namespace: namespace)?.first;
     } on StateError {
@@ -32,11 +32,11 @@ class RssParser {
   }
 
   Iterable<XmlElement> findElements(
-      XmlNode node,
-      String name, {
-        bool recursive = false,
-        String namespace,
-      }) {
+    XmlNode node,
+    String name, {
+    bool recursive = false,
+    String namespace,
+  }) {
     try {
       if (recursive) {
         return node.findAllElements(name, namespace: namespace);

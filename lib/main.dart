@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:wa_fuel/resources.dart';
@@ -14,6 +15,7 @@ import 'package:wa_fuel/services/database_helper.dart';
 import 'package:wa_fuel/services/fuelwatch_service.dart';
 import 'package:wa_fuel/style.dart';
 
+import 'models/app_state.dart';
 import 'models/favourite.dart';
 import 'screens/home_page.dart';
 
@@ -41,18 +43,18 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     // Configure BackgroundFetch.
     int status = await BackgroundFetch.configure(
-        BackgroundFetchConfig(
-            minimumFetchInterval: 120,
-            stopOnTerminate: false,
-            enableHeadless: true,
-            requiresBatteryNotLow: false,
-            requiresCharging: false,
-            requiresStorageNotLow: false,
-            requiresDeviceIdle: false,
-            requiredNetworkType: NetworkType.ANY,
-        ),
-        _eventHandler,
-        _timeoutHandler,
+      BackgroundFetchConfig(
+        minimumFetchInterval: 120,
+        stopOnTerminate: false,
+        enableHeadless: true,
+        requiresBatteryNotLow: false,
+        requiresCharging: false,
+        requiresStorageNotLow: false,
+        requiresDeviceIdle: false,
+        requiredNetworkType: NetworkType.ANY,
+      ),
+      _eventHandler,
+      _timeoutHandler,
     );
     print('[BackgroundFetch] configure success: $status');
 
@@ -83,16 +85,19 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          primaryColor: ThemeColor.mainColor,
-          accentColor: ThemeColor.mainColor,
-          textButtonTheme: TextButtonThemeData(
-              style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-          ))),
-      home: HomePage(),
+    return ChangeNotifierProvider(
+      create: (context) => AppState(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+            primaryColor: ThemeColor.mainColor,
+            accentColor: ThemeColor.mainColor,
+            textButtonTheme: TextButtonThemeData(
+                style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+            ))),
+        home: HomePage(),
+      ),
     );
   }
 }

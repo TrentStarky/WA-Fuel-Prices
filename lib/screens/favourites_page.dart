@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:wa_fuel/models/app_state.dart';
 import 'package:wa_fuel/models/favourite.dart';
 import 'package:wa_fuel/models/fuel_station.dart';
 import 'package:wa_fuel/resources.dart';
 import 'package:wa_fuel/screens/single_favourite_page.dart';
 import 'package:wa_fuel/screens/single_station_page.dart';
-import 'package:wa_fuel/services/text_size_calculator.dart';
-import 'package:wa_fuel/services/database_helper.dart';
-import 'package:wa_fuel/services/fuelwatch_service.dart';
 import 'package:wa_fuel/services/painter.dart';
+import 'package:wa_fuel/services/text_size_calculator.dart';
 import 'package:wa_fuel/style.dart';
 
 //TODO: Add proper bloc state management
@@ -24,107 +23,67 @@ class FavouritesPage extends StatefulWidget {
 }
 
 class _FavouritesPageState extends State<FavouritesPage> {
-  List<Favourite> favouritesList;
   RefreshController _refreshController;
 
   ///Load saved favourites then get current prices
   @override
   void initState() {
     _refreshController = RefreshController();
-
-    _getData();
     super.initState();
-  }
-
-  ///Gets data for UI
-  Future<void> _getData() async {
-    var favourites = await _getFavouritesFromDatabase();
-    var finalList = await _getFavouritesPrices(favourites);
-    setState(() {
-      favouritesList = finalList;
-    });
-
-    return;
-  }
-
-  ///Gets favourites from database
-  Future<List<Map>> _getFavouritesFromDatabase() async {
-    Database database = await DBHelper().getFavouritesDatabase();
-
-    List<Map> favouriteDBList = await database.rawQuery('SELECT * FROM ${Resources.dbFavourites}');
-
-    return favouriteDBList;
-  }
-
-  ///Gets prices for each favourite
-  Future<List<Favourite>> _getFavouritesPrices(List<Map> list) async {
-    List<Favourite> returnList = [];
-    List<Future<List<FuelStation>>> stationListFutures = [];
-
-    for (Map favourite in list) {
-      Favourite favouriteItem = Favourite.fromDatabase(favourite);
-      stationListFutures.add(FuelWatchService.getFuelStationsToday(favouriteItem.searchParams));
-      stationListFutures.add(FuelWatchService.getFuelStationsTomorrow(favouriteItem.searchParams));
-      returnList.add(favouriteItem);
-    }
-
-    await Future.wait(stationListFutures).then((stationList) {
-      for (int i = 0; i < returnList.length; i++) {
-        returnList[i].addTodayStations(stationList[i * 2]);
-        returnList[i].addTomorrowStations(stationList[(i * 2) + 1]);
-      }
-    });
-
-    return returnList;
   }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (ctx, con) => (favouritesList == null)
-          ? Center(
-              child: CircularProgressIndicator(color: ThemeColor.mainColor),
-            )
-          : (favouritesList.length == 0)
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      'No favourites found, add favourites by starring a search in the search tab',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                  ),
-                )
-              : SmartRefresher(
-                  controller: _refreshController,
-                  header: ClassicHeader(),
-                  onRefresh: () async {
-                    await _getData();
-                    _refreshController.refreshCompleted();
-                  },
-                  child: ListView.builder(
-                    itemBuilder: (context, index) => Column(
-                      children: [
-                        ///Add padding to top of first item
-                        (index == 0)
-                            ? SizedBox(
-                                height: con.maxWidth * 0.025,
-                              )
-                            : Container(),
-                        SizedBox(
-                          width: con.maxWidth * 0.95,
-                          child: FavouriteListItem(
-                              favouritesList[index], () => setState(() => favouritesList.removeAt(index))),
-                        ),
-                        SizedBox(
-                          height: con.maxWidth * 0.025,
-                        ),
-                      ],
-                    ),
-                    itemCount: favouritesList.length,
-                  ),
+      builder: (ctx, con) => Consumer<AppState>(builder: (context, state, child) {
+        if (state.loading == true) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          if (state.favouritesList.length == 0) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'No favourites found, add favourites by starring a search in the search tab',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16.0),
                 ),
+              ),
+            );
+          } else {
+            return SmartRefresher(
+              controller: _refreshController,
+              header: ClassicHeader(),
+              onRefresh: () async {
+                await Provider.of<AppState>(context, listen: false).refreshPrices();
+                _refreshController.refreshCompleted();
+              },
+              child: ListView.builder(
+                itemBuilder: (context, index) => Column(
+                  children: [
+                    ///Add padding to top of first item
+                    (index == 0)
+                        ? SizedBox(
+                            height: con.maxWidth * 0.025,
+                          )
+                        : Container(),
+                    SizedBox(
+                      width: con.maxWidth * 0.95,
+                      child: FavouriteListItem(state.favouritesList[index]),
+                    ),
+                    SizedBox(
+                      height: con.maxWidth * 0.025,
+                    ),
+                  ],
+                ),
+                itemCount: state.favouritesList.length,
+              ),
+            );
+          }
+        }
+      }),
     );
   }
 }
@@ -133,9 +92,8 @@ class _FavouritesPageState extends State<FavouritesPage> {
 ///Displays prices for a favourite in the favourites list
 class FavouriteListItem extends StatefulWidget {
   final Favourite itemInstance;
-  final void Function() removeSelfCallback;
 
-  FavouriteListItem(this.itemInstance, this.removeSelfCallback);
+  FavouriteListItem(this.itemInstance);
 
   @override
   _FavouriteListItemState createState() => _FavouriteListItemState();
@@ -195,14 +153,8 @@ class _FavouriteListItemState extends State<FavouriteListItem> with TickerProvid
                     constraints: BoxConstraints.tight(Size(25, 25)),
                     padding: EdgeInsets.zero,
                     onPressed: () {
-                      final refreshScreen = Navigator.push(
+                      Navigator.push(
                           context, MaterialPageRoute(builder: (context) => SingleFavouritePage(widget.itemInstance)));
-                      refreshScreen.then((removeSelf) {
-                        //When deleting a favorite on SingleFavouritePage, Navigator.pop returns true and display favourite list should update to remove child from display
-                        if (removeSelf != null && removeSelf) {
-                          widget.removeSelfCallback();
-                        }
-                      });
                     },
                     icon: Icon(
                       Icons.more_vert,
@@ -443,11 +395,10 @@ class _FavouriteListItemState extends State<FavouriteListItem> with TickerProvid
       numToRender = 1;
     }
 
-    return ((TextSizeCalculator.calculate('Pq', TextStyle(fontWeight: FontWeight.bold), 1, double.infinity,
-                    MediaQuery.textScaleFactorOf(context))
-                .height +
-            35) *
-        numToRender);
+    var textSize = TextSizeCalculator.calculate(
+        'Pq', TextStyle(fontWeight: FontWeight.bold), 1, double.infinity, MediaQuery.textScaleFactorOf(context));
+
+    return ((textSize.height + 35) * numToRender);
   }
 }
 

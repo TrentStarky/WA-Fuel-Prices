@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:wa_fuel/screens/onboarding_page.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:wa_fuel/screens/onboarding_page.dart';
 
 import '../style.dart';
 

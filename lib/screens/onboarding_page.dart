@@ -33,15 +33,17 @@ class _OnboardingPageState extends State<OnboardingPage> {
         next: Text('Next'),
         done: Text('Finish'),
         onDone: () {
-          if (Platform.isIOS) { //need to ask for notification permissions now on iOS
+          if (Platform.isIOS) {
+            //need to ask for notification permissions now on iOS
             FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
             flutterLocalNotificationsPlugin
-                .resolvePlatformSpecificImplementation
-            <IOSFlutterLocalNotificationsPlugin>()?.requestPermissions(
-              alert: true,
-              badge: true,
-              sound: true,
-            )?.then((result) {
+                .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
+                ?.requestPermissions(
+                  alert: true,
+                  badge: true,
+                  sound: true,
+                )
+                ?.then((result) {
               Navigator.pop(context);
             });
           } else {

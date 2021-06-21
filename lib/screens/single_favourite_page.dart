@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:wa_fuel/models/app_state.dart';
 import 'package:wa_fuel/models/favourite.dart';
 import 'package:wa_fuel/resources.dart';
 import 'package:wa_fuel/services/database_helper.dart';
@@ -179,6 +181,8 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
                 child: ElevatedButton(
                   onPressed: () async {
                     if (await _confirmDeletion()) {
+                      Provider.of<AppState>(context, listen: false).remove(widget.favourite);
+
                       ///Remove favourite from database
                       Database database = await DBHelper().getFavouritesDatabase();
                       database.rawUpdate(
@@ -190,7 +194,7 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
                             widget.favourite.searchParams.suburbValue,
                             widget.favourite.searchParams.includeSurrounding ? 1 : 0
                           ]);
-                      Navigator.pop(context, true);
+                      Navigator.pop(context);
                     }
                   },
                   style: ButtonStyle(

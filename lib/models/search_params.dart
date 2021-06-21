@@ -68,4 +68,16 @@ class SearchParams {
       return 'WA';
     }
   }
+
+  SearchParams copy() {
+    SearchParams newSearchParams = SearchParams();
+
+    newSearchParams.suburbValue = this.suburbValue;
+    newSearchParams.regionValue = this.regionValue;
+    newSearchParams.includeSurrounding = this.includeSurrounding;
+    newSearchParams.brandValue = this.brandValue;
+    newSearchParams.productValue = this.productValue;
+
+    return newSearchParams;
+  }
 }
