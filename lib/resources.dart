@@ -555,6 +555,9 @@ class Resources {
     'YOUNGS SIDING',
   ];
 
+  ///Firebase Cloud Messaging categories
+  static final String updateFuelPricesCategory = 'UpdateFuelPrices';
+
   ///RSS strings
   static final String productString = 'Product';
   static final String brandString = 'Brand';

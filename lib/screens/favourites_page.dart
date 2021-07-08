@@ -12,7 +12,6 @@ import 'package:wa_fuel/services/painter.dart';
 import 'package:wa_fuel/services/text_size_calculator.dart';
 import 'package:wa_fuel/style.dart';
 
-//TODO: Add proper bloc state management
 //TODO: Add error message when FuelWatch RSS feed is inaccessible so users know the issue is not with the app
 
 ///CLASS: FavouritesPage

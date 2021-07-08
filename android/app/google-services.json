@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "142524910524",
+    "project_id": "wa-fuel",
+    "storage_bucket": "wa-fuel.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:142524910524:android:06d85dff4fae8b0850b9b9",
+        "android_client_info": {
+          "package_name": "dev.starsoftware.wa_fuel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "142524910524-1db8sd9a90tsjl72gsgfkqvl175k7j50.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXk2I667l60ZDjrXHhupL1HxP_frQCuEQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "142524910524-1db8sd9a90tsjl72gsgfkqvl175k7j50.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -195,10 +195,10 @@ class _SearchPageState extends State<SearchPage> {
                             enabled: (selectedArea != SelectedArea.suburb),
                             hint: '--All Regions--',
                             searchBoxDecoration: InputDecoration(
-                                hintText: 'Search...',
-                                hintStyle: TextStyle(color: Colors.grey),
-                                contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
-                                border: OutlineInputBorder(),
+                              hintText: 'Search...',
+                              hintStyle: TextStyle(color: Colors.grey),
+                              contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
+                              border: OutlineInputBorder(),
                             ),
                             items: Resources.regionsStringToRss.keys.toList(),
                             onChanged: (value) {
