@@ -51,7 +51,8 @@ class _SearchPageState extends State<SearchPage> {
                 Padding(
                   padding: EdgeInsets.only(top: 8.0, left: 16.0),
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
@@ -85,10 +86,12 @@ class _SearchPageState extends State<SearchPage> {
                               if (value == null) {
                                 searchParams.productValue = '1';
                               } else {
-                                searchParams.productValue = Resources.productsStringToRss[value];
+                                searchParams.productValue =
+                                    Resources.productsStringToRss[value];
                               }
                             },
-                            selectedItem: Resources.productsStringToRss.keys.toList()[0],
+                            selectedItem:
+                                Resources.productsStringToRss.keys.toList()[0],
                           ),
                         ),
                       ],
@@ -103,7 +106,8 @@ class _SearchPageState extends State<SearchPage> {
                 Padding(
                   padding: EdgeInsets.only(top: 8.0, left: 16.0),
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
@@ -139,7 +143,8 @@ class _SearchPageState extends State<SearchPage> {
                               if (value == null) {
                                 searchParams.brandValue = '0';
                               } else {
-                                searchParams.brandValue = Resources.brandsStringToRss[value];
+                                searchParams.brandValue =
+                                    Resources.brandsStringToRss[value];
                               }
                             },
                           ),
@@ -156,7 +161,8 @@ class _SearchPageState extends State<SearchPage> {
                 Padding(
                   padding: EdgeInsets.only(top: 8.0, left: 16.0),
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
@@ -216,7 +222,8 @@ class _SearchPageState extends State<SearchPage> {
                               if (value == null) {
                                 searchParams.regionValue = '0';
                               } else {
-                                searchParams.regionValue = Resources.regionsStringToRss[value];
+                                searchParams.regionValue =
+                                    Resources.regionsStringToRss[value];
                               }
                             },
                           ),
@@ -236,7 +243,8 @@ class _SearchPageState extends State<SearchPage> {
                 Padding(
                   padding: EdgeInsets.only(top: 8.0, left: 16.0),
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
@@ -316,7 +324,8 @@ class _SearchPageState extends State<SearchPage> {
                           value: searchParams.includeSurrounding,
                           onChanged: (value) {
                             setState(() {
-                              searchParams.includeSurrounding = !searchParams.includeSurrounding;
+                              searchParams.includeSurrounding =
+                                  !searchParams.includeSurrounding;
                             });
                           }),
                       Text('Include surrounding suburbs?'),
@@ -334,20 +343,26 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                   style: ButtonStyle(
                     padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                        EdgeInsets.symmetric(horizontal: con.maxWidth * 0.3, vertical: con.maxHeight * 0.03)),
-                    backgroundColor: MaterialStateProperty.all<Color>(ThemeColor.mainColor),
+                        EdgeInsets.symmetric(
+                            horizontal: con.maxWidth * 0.3,
+                            vertical: con.maxHeight * 0.03)),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(ThemeColor.mainColor),
                     elevation: MaterialStateProperty.all<double>(0.0),
                   ),
                   onPressed: () async {
                     _formKey.currentState.save();
-                    var fuelStationsTodayFuture = FuelWatchService.getFuelStationsToday(searchParams);
-                    var fuelStationsTomorrowFuture = FuelWatchService.getFuelStationsTomorrow(searchParams);
+                    var fuelStationsTodayFuture =
+                        FuelWatchService.getFuelStationsToday(searchParams);
+                    var fuelStationsTomorrowFuture =
+                        FuelWatchService.getFuelStationsTomorrow(searchParams);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => SearchResultsPage(
                           fuelStationsTodayFuture: fuelStationsTodayFuture,
-                          fuelStationsTomorrowFuture: fuelStationsTomorrowFuture,
+                          fuelStationsTomorrowFuture:
+                              fuelStationsTomorrowFuture,
                           searchParams: searchParams,
                         ),
                       ),
@@ -364,7 +379,8 @@ class _SearchPageState extends State<SearchPage> {
                   onPressed: () {
                     setState(() {
                       //clear all states and reset to initial values
-                      _productKey.currentState.changeSelectedItem(Resources.productsStringToRss.keys.toList()[0]);
+                      _productKey.currentState.changeSelectedItem(
+                          Resources.productsStringToRss.keys.toList()[0]);
                       _brandKey.currentState.clear();
                       _regionKey.currentState.clear();
                       _suburbKey.currentState.clear();

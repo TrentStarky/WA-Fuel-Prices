@@ -26,7 +26,8 @@ class SearchParams {
     this.brandValue = databaseMap['${Resources.dbBrand}'].toString();
     this.regionValue = databaseMap['${Resources.dbRegion}'].toString();
     this.suburbValue = databaseMap['${Resources.dbSuburb}'].toString();
-    this.includeSurrounding = databaseMap['${Resources.dbIncludeSurrounding}'] == 1 ? true : false;
+    this.includeSurrounding =
+        databaseMap['${Resources.dbIncludeSurrounding}'] == 1 ? true : false;
   }
 
   ///Converts SearchParams to a map to be used in RSS url, not setting variables with no change from initial values

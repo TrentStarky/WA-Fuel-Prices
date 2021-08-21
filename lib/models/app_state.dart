@@ -25,7 +25,8 @@ class AppState extends ChangeNotifier {
   }
 
   void remove(Favourite favourite) {
-    _favourites.removeWhere((currentFavourite) => currentFavourite.searchParams == favourite.searchParams);
+    _favourites.removeWhere((currentFavourite) =>
+        currentFavourite.searchParams == favourite.searchParams);
     notifyListeners();
   }
 
@@ -44,7 +45,8 @@ class AppState extends ChangeNotifier {
     notifyListeners();
     Database database = await DBHelper().getFavouritesDatabase();
 
-    List<Map> favouriteDBList = await database.rawQuery('SELECT * FROM ${Resources.dbFavourites}');
+    List<Map> favouriteDBList =
+        await database.rawQuery('SELECT * FROM ${Resources.dbFavourites}');
 
     for (Map favouriteMap in favouriteDBList) {
       _favourites.add(await _loadPrices(Favourite.fromDatabase(favouriteMap)));
@@ -57,12 +59,18 @@ class AppState extends ChangeNotifier {
     Future<List<FuelStation>> todayPricesFuture;
     Future<List<FuelStation>> tomorrowPricesFuture;
 
-    todayPricesFuture = FuelWatchService.getFuelStationsToday(favourite.searchParams);
-    tomorrowPricesFuture = FuelWatchService.getFuelStationsTomorrow(favourite.searchParams);
+    todayPricesFuture =
+        FuelWatchService.getFuelStationsToday(favourite.searchParams);
+    tomorrowPricesFuture =
+        FuelWatchService.getFuelStationsTomorrow(favourite.searchParams);
 
-    await Future.wait([todayPricesFuture, tomorrowPricesFuture]).then((stationPrices) {
+    await Future.wait([todayPricesFuture, tomorrowPricesFuture])
+        .then((stationPrices) {
       favourite.addTodayStations(stationPrices[0]);
-      favourite.addTomorrowStations(stationPrices[1]);
+      //prevents weird edge case where today prices timeout but tomorrows doesn't and formatting/everything breaks
+      if (stationPrices[0].length != 0) {
+        favourite.addTomorrowStations(stationPrices[1]);
+      }
     });
 
     return favourite;

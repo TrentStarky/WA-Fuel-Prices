@@ -27,7 +27,8 @@ class DBHelper {
         path = databasePath + '/favourites_db.db';
       }
 
-      Database database = await openDatabase(path, version: 1, onCreate: (Database db, int version) async {
+      Database database = await openDatabase(path, version: 1,
+          onCreate: (Database db, int version) async {
         await db.execute(
             'CREATE TABLE ${Resources.dbFavourites} (id INTEGER PRIMARY KEY, ${Resources.dbProduct} INTEGER, ${Resources.dbBrand} INTEGER, ${Resources.dbRegion} INTEGER, ${Resources.dbSuburb} STRING, ${Resources.dbIncludeSurrounding} INTEGER, ${Resources.dbNotificationsEnabled} INTEGER, ${Resources.dbPushNotification} INTEGER)');
       });

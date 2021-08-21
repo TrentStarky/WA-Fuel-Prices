@@ -25,6 +25,7 @@ class _SingleStationPageState extends State<SingleStationPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.station.tradingName),
+        centerTitle: true,
       ),
       body: ListView(
         children: [
@@ -67,11 +68,14 @@ class _SingleStationPageState extends State<SingleStationPage> {
                 child: SizedBox(
                   height: 300,
                   child: GoogleMap(
-                    gestureRecognizers: {Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer())},
+                    gestureRecognizers: {
+                      Factory<OneSequenceGestureRecognizer>(
+                          () => EagerGestureRecognizer())
+                    },
                     rotateGesturesEnabled: true,
                     scrollGesturesEnabled: true,
                     initialCameraPosition: CameraPosition(
-                      zoom: 15,
+                      zoom: 14,
                       target: LatLng(
                         double.parse(widget.station.latitude),
                         double.parse(widget.station.longitude),
@@ -93,7 +97,8 @@ class _SingleStationPageState extends State<SingleStationPage> {
                 child: Text('Get Directions'),
                 onPressed: () {
                   MapsLauncher.launchCoordinates(
-                      double.parse(widget.station.latitude), double.parse(widget.station.longitude));
+                      double.parse(widget.station.latitude),
+                      double.parse(widget.station.longitude));
                 },
               )
             ],
@@ -105,6 +110,8 @@ class _SingleStationPageState extends State<SingleStationPage> {
 
   ///Opens telephone number in selected telephone application
   void _launchTel(String phoneNumber) async {
-    await canLaunch('tel:$phoneNumber') ? launch('tel:$phoneNumber') : throw 'Could not launch "tel:$phoneNumber"';
+    await canLaunch('tel:$phoneNumber')
+        ? launch('tel:$phoneNumber')
+        : throw 'Could not launch "tel:$phoneNumber"';
   }
 }

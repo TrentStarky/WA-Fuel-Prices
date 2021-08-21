@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -62,6 +63,7 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Favourite'),
+        centerTitle: true,
         elevation: 0,
       ),
       body: Padding(
@@ -74,11 +76,17 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
               child: RichText(
                 text: TextSpan(
                     text: 'Product: ',
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: _fontSize),
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: _fontSize),
                     children: [
                       TextSpan(
-                          text: '${Resources.productsRssToString[widget.favourite.searchParams.productValue]}',
-                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: _fontSize))
+                          text:
+                              '${Resources.productsRssToString[widget.favourite.searchParams.productValue]}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: _fontSize))
                     ]),
               ),
             ),
@@ -87,11 +95,17 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
               child: RichText(
                 text: TextSpan(
                     text: 'Brand: ',
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: _fontSize),
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: _fontSize),
                     children: [
                       TextSpan(
-                          text: '${Resources.brandsRssToString[widget.favourite.searchParams.brandValue]}',
-                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: _fontSize))
+                          text:
+                              '${Resources.brandsRssToString[widget.favourite.searchParams.brandValue]}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: _fontSize))
                     ]),
               ),
             ),
@@ -99,12 +113,21 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
               padding: const EdgeInsets.all(8.0),
               child: RichText(
                 text: TextSpan(
-                    text: (widget.favourite.searchParams.suburbValue != 'Any Suburb') ? 'Suburb: ' : 'Region: ',
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: _fontSize),
+                    text: (widget.favourite.searchParams.suburbValue !=
+                            'Any Suburb')
+                        ? 'Suburb: '
+                        : 'Region: ',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: _fontSize),
                     children: [
                       TextSpan(
-                          text: '${widget.favourite.searchParams.getLocation()}',
-                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: _fontSize))
+                          text:
+                              '${widget.favourite.searchParams.getLocation()}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: _fontSize))
                     ]),
               ),
             ),
@@ -114,11 +137,17 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
                     child: RichText(
                       text: TextSpan(
                           text: 'Include Surrounding: ',
-                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: _fontSize),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: _fontSize),
                           children: [
                             TextSpan(
-                                text: '${widget.favourite.searchParams.includeSurrounding ? 'Yes' : 'No'}',
-                                style: TextStyle(fontWeight: FontWeight.normal, fontSize: _fontSize))
+                                text:
+                                    '${widget.favourite.searchParams.includeSurrounding ? 'Yes' : 'No'}',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: _fontSize))
                           ]),
                     ),
                   )
@@ -181,10 +210,12 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
                 child: ElevatedButton(
                   onPressed: () async {
                     if (await _confirmDeletion()) {
-                      Provider.of<AppState>(context, listen: false).remove(widget.favourite);
+                      Provider.of<AppState>(context, listen: false)
+                          .remove(widget.favourite);
 
                       ///Remove favourite from database
-                      Database database = await DBHelper().getFavouritesDatabase();
+                      Database database =
+                          await DBHelper().getFavouritesDatabase();
                       database.rawUpdate(
                           'DELETE FROM ${Resources.dbFavourites} WHERE ${Resources.dbProduct} = ? AND  ${Resources.dbBrand} = ? AND ${Resources.dbRegion} = ? AND ${Resources.dbSuburb} = ? AND ${Resources.dbIncludeSurrounding} = ?',
                           [
@@ -192,13 +223,16 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
                             widget.favourite.searchParams.brandValue,
                             widget.favourite.searchParams.regionValue,
                             widget.favourite.searchParams.suburbValue,
-                            widget.favourite.searchParams.includeSurrounding ? 1 : 0
+                            widget.favourite.searchParams.includeSurrounding
+                                ? 1
+                                : 0
                           ]);
                       Navigator.pop(context);
                     }
                   },
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.red),
                     elevation: MaterialStateProperty.all<double>(0.0),
                   ),
                   child: Text(
@@ -235,6 +269,13 @@ class _SingleFavouritePageState extends State<SingleFavouritePage> {
                   title: Text('Are you sure?'),
                   actions: [
                     TextButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.red),
+                        textStyle: MaterialStateProperty.all(
+                            TextStyle(fontWeight: FontWeight.bold)),
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.white),
+                      ),
                       child: Text('Delete'),
                       onPressed: () => Navigator.of(context).pop(true),
                     ),

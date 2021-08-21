@@ -18,6 +18,7 @@ class _InformationPageState extends State<InformationPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Information'),
+        centerTitle: true,
         elevation: 0,
       ),
       body: Padding(
@@ -26,12 +27,15 @@ class _InformationPageState extends State<InformationPage> {
           children: [
             ElevatedButton(
               style: ButtonStyle(
-                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.symmetric(horizontal: 40)),
-                backgroundColor: MaterialStateProperty.all<Color>(ThemeColor.mainColor),
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    EdgeInsets.symmetric(horizontal: 40)),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(ThemeColor.mainColor),
                 elevation: MaterialStateProperty.all<double>(0.0),
               ),
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => OnboardingPage()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => OnboardingPage()));
               },
               child: Text('Show Instructions'),
             ),
@@ -40,15 +44,18 @@ class _InformationPageState extends State<InformationPage> {
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                    text: 'Fuel prices are powered by FuelWatch, more information can be found at: ',
+                    text:
+                        'Fuel prices are powered by FuelWatch, more information can be found at: ',
                     style: TextStyle(color: Colors.black),
                     children: [
                       TextSpan(
                           text: 'www.fuelwatch.wa.gov.au',
-                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.black),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () async {
-                              if (await canLaunch('https://www.fuelwatch.wa.gov.au')) {
+                              if (await canLaunch(
+                                  'https://www.fuelwatch.wa.gov.au')) {
                                 launch('https://www.fuelwatch.wa.gov.au');
                               }
                             })
@@ -60,16 +67,20 @@ class _InformationPageState extends State<InformationPage> {
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                    text: 'Found an issue or have a suggestion? Contact us at: ',
+                    text:
+                        'Found an issue or have a suggestion? Contact us at: ',
                     style: TextStyle(color: Colors.black),
                     children: [
                       TextSpan(
                           text: 'wafuel@starsoftware.dev',
-                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.black),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () async {
-                              if (await canLaunch('mailto:wafuel@starsoftware.dev?subject=WA%20Fuel%20Contact')) {
-                                launch('mailto:wafuel@starsoftware.dev?subject=WA%20Fuel%20Contact');
+                              if (await canLaunch(
+                                  'mailto:wafuel@starsoftware.dev?subject=WA%20Fuel%20Contact')) {
+                                launch(
+                                    'mailto:wafuel@starsoftware.dev?subject=WA%20Fuel%20Contact');
                               }
                             })
                     ]),

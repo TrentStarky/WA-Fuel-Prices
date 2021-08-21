@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:introduction_screen/introduction_screen.dart';
@@ -27,17 +28,46 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   @override
+  void didChangeDependencies() async {
+    Future cache1 = precacheImage(
+        Image.asset('assets/images/Fuel App Onboarding Search.jpg').image,
+        context);
+    Future cache2 = precacheImage(
+        Image.asset('assets/images/Fuel App Onboarding Favourite.jpg').image,
+        context);
+    Future cache3 = precacheImage(
+        Image.asset('assets/images/Fuel App Onboarding Notification.jpg').image,
+        context);
+
+    await Future.wait([cache1, cache2, cache3]);
+
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (ctx, con) => IntroductionScreen(
         next: Text('Next'),
-        done: Text('Finish'),
+        done: Container(
+          padding: EdgeInsets.symmetric(vertical: 7, horizontal: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: ThemeColor.mainColor,
+          ),
+          child: Text(
+            'Finish',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
         onDone: () {
           if (Platform.isIOS) {
             //need to ask for notification permissions now on iOS
-            FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+            FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+                FlutterLocalNotificationsPlugin();
             flutterLocalNotificationsPlugin
-                .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
+                .resolvePlatformSpecificImplementation<
+                    IOSFlutterLocalNotificationsPlugin>()
                 ?.requestPermissions(
                   alert: true,
                   badge: true,
@@ -55,7 +85,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
           PageViewModel(
             decoration: pageDecoration,
             title: 'Search',
-            body: 'Search for the best fuel prices by product, brand and region / suburb',
+            body:
+                'Search for the best fuel prices by product, brand and region / suburb',
             image: Image.asset(
               'assets/images/Fuel App Onboarding Search.jpg',
               width: con.maxWidth * 0.7,

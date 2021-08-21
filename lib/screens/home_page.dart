@@ -30,7 +30,8 @@ class _HomePageState extends State<HomePage> {
     //Show on-boarding page if first run
     SharedPreferences.getInstance().then((prefs) {
       if (prefs.getBool(Resources.dbFirstRun) == null) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => OnboardingPage()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => OnboardingPage()));
         prefs.setBool(Resources.dbFirstRun, false);
       }
 
@@ -47,11 +48,13 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           leading: Icon(Icons.local_gas_station),
           title: Text('WA Fuel Prices'),
+          centerTitle: true,
           actions: [
             IconButton(
               icon: Icon(Icons.info_outline),
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => InformationPage()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => InformationPage()));
               },
             )
           ],

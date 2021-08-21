@@ -15,7 +15,10 @@ class RssParser {
     if (channelElement == null) {
       throw ArgumentError('channel not found');
     }
-    return (rss != null ? channelElement : rdf).findElements('item').map((e) => FuelStation.fromRssFeed(e)).toList();
+    return (rss != null ? channelElement : rdf)
+        .findElements('item')
+        .map((e) => FuelStation.fromRssFeed(e))
+        .toList();
   }
 
   XmlElement findFirstElement(
@@ -25,7 +28,9 @@ class RssParser {
     String namespace,
   }) {
     try {
-      return findElements(node, name, recursive: recursive, namespace: namespace)?.first;
+      return findElements(node, name,
+              recursive: recursive, namespace: namespace)
+          ?.first;
     } on StateError {
       return null;
     }

@@ -56,12 +56,14 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-            primaryColor: ThemeColor.mainColor,
-            accentColor: ThemeColor.mainColor,
-            textButtonTheme: TextButtonThemeData(
-                style: ButtonStyle(
+          primaryColor: ThemeColor.mainColor,
+          accentColor: ThemeColor.mainColor,
+          textButtonTheme: TextButtonThemeData(
+            style: ButtonStyle(
               foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-            ))),
+            ),
+          ),
+        ),
         home: HomePage(),
       ),
     );

@@ -17,7 +17,11 @@ import 'package:wa_fuel/style.dart';
 ///CLASS: SearchResultsPage
 ///Displays prices and stations returned from RSS feed after search
 class SearchResultsPage extends StatefulWidget {
-  SearchResultsPage({this.fuelStationsTodayFuture, this.fuelStationsTomorrowFuture, this.searchParams}) : super();
+  SearchResultsPage(
+      {this.fuelStationsTodayFuture,
+      this.fuelStationsTomorrowFuture,
+      this.searchParams})
+      : super();
 
   final Future<List<FuelStation>> fuelStationsTodayFuture;
   final Future<List<FuelStation>> fuelStationsTomorrowFuture;
@@ -27,7 +31,8 @@ class SearchResultsPage extends StatefulWidget {
   _SearchResultsPageState createState() => _SearchResultsPageState();
 }
 
-class _SearchResultsPageState extends State<SearchResultsPage> with TickerProviderStateMixin {
+class _SearchResultsPageState extends State<SearchResultsPage>
+    with TickerProviderStateMixin {
   List<FuelStation> fuelStationsToday;
   List<FuelStation> fuelStationsTomorrow;
   bool _favourite;
@@ -36,7 +41,9 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
   ///Wait for futures to return values to update screen
   @override
   void initState() {
-    Future.wait([widget.fuelStationsTodayFuture, widget.fuelStationsTomorrowFuture]).then((value) {
+    Future.wait(
+            [widget.fuelStationsTodayFuture, widget.fuelStationsTomorrowFuture])
+        .then((value) {
       setState(() {
         fuelStationsToday = value[0];
         fuelStationsTomorrow = value[1];
@@ -75,11 +82,14 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
     return Scaffold(
       appBar: AppBar(
         title: Text('Search'),
+        centerTitle: true,
         elevation: 0,
         actions: [
           IconButton(
               key: Key('Favourite Button'),
-              icon: (_favourite) ? Icon(Icons.star) : Icon(Icons.star_border_outlined),
+              icon: (_favourite)
+                  ? Icon(Icons.star)
+                  : Icon(Icons.star_border_outlined),
               onPressed: () {
                 _favouriteSearch(widget.searchParams);
               }),
@@ -91,12 +101,15 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
             SizedBox(
               height: con.maxHeight * 0.1,
               child: Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide()), color: ThemeColor.lightBackground),
+                decoration: BoxDecoration(
+                    border: Border(bottom: BorderSide()),
+                    color: ThemeColor.lightBackground),
                 child: TabBar(
                   indicator: _CustomTabIndicator(),
                   labelColor: Colors.white,
                   unselectedLabelColor: Colors.black,
-                  labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  labelStyle:
+                      TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   controller: _controller,
                   tabs: [
                     Tab(text: 'Today'),
@@ -122,7 +135,9 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
   Widget _buildTodaySearch(Constraints con) {
     return (fuelStationsToday == null)
         ? Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              color: ThemeColor.mainColor,
+            ),
           )
         : (fuelStationsToday.length != 0)
             ? ListView.separated(
@@ -154,7 +169,9 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
   Widget _buildTomorrowSearch(Constraints con) {
     return (fuelStationsTomorrow == null)
         ? Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              color: ThemeColor.mainColor,
+            ),
           )
         : (fuelStationsTomorrow.length != 0)
             ? ListView.separated(
@@ -183,15 +200,25 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
   ///Displays price and station info in a list tile
   Widget _buildTile(BoxConstraints con, int index, FuelStation fuelStation) {
     return InkWell(
-        onTap: () =>
-            Navigator.push(context, MaterialPageRoute(builder: (context) => SingleStationPage(station: fuelStation))),
+        onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SingleStationPage(station: fuelStation))),
         child: Container(
           child: SizedBox(
-            height: (TextSizeCalculator.calculate(fuelStation.tradingName, TextStyle(fontSize: 20), 2,
-                            con.maxWidth * 0.6, MediaQuery.of(context).textScaleFactor)
+            height: (TextSizeCalculator.calculate(
+                            fuelStation.tradingName,
+                            TextStyle(fontSize: 20),
+                            2,
+                            con.maxWidth * 0.6,
+                            MediaQuery.of(context).textScaleFactor)
                         .height +
-                    TextSizeCalculator.calculate('${fuelStation.address}, ${fuelStation.locationName}', TextStyle(), 1,
-                            con.maxWidth * 0.6, MediaQuery.of(context).textScaleFactor)
+                    TextSizeCalculator.calculate(
+                            '${fuelStation.address}, ${fuelStation.locationName}',
+                            TextStyle(),
+                            1,
+                            con.maxWidth * 0.6,
+                            MediaQuery.of(context).textScaleFactor)
                         .height) +
                 10,
             child: Row(
@@ -203,7 +230,8 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
                         padding: EdgeInsets.only(left: 16.0),
                         child: Text(
                           '${fuelStation.price}',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
                         ),
                       ),
                       Padding(
@@ -250,12 +278,14 @@ class _SearchResultsPageState extends State<SearchResultsPage> with TickerProvid
     Database database = await DBHelper().getFavouritesDatabase();
 
     if (_favourite) {
-      Provider.of<AppState>(context, listen: false).add(Favourite.fromSearchParams(searchParameters
-          .copy())); //need to deep copy searchParams so that changes to the searchParam on the search page won't update the searchParams in the favourite
+      Provider.of<AppState>(context, listen: false).add(
+          Favourite.fromSearchParams(searchParameters
+              .copy())); //need to deep copy searchParams so that changes to the searchParam on the search page won't update the searchParams in the favourite
       await database.rawInsert(
           'INSERT INTO ${Resources.dbFavourites}(${Resources.dbProduct}, ${Resources.dbBrand}, ${Resources.dbRegion}, ${Resources.dbSuburb}, ${Resources.dbIncludeSurrounding}, ${Resources.dbPushNotification}) VALUES(${searchParameters.productValue}, ${searchParameters.brandValue}, ${searchParameters.regionValue}, \'${searchParameters.suburbValue}\', ${searchParameters.includeSurrounding ? 1 : 0}, 0)');
     } else {
-      Provider.of<AppState>(context, listen: false).remove(Favourite.fromSearchParams(searchParameters));
+      Provider.of<AppState>(context, listen: false)
+          .remove(Favourite.fromSearchParams(searchParameters));
       await database.rawDelete(
           'DELETE FROM favourites WHERE ${Resources.dbProduct} = ? AND ${Resources.dbBrand} = ? AND ${Resources.dbRegion} = ? AND ${Resources.dbSuburb} = ? AND ${Resources.dbIncludeSurrounding} = ?',
           [
@@ -285,15 +315,20 @@ class _CustomPainter extends BoxPainter {
     paintLine.color = Colors.grey;
     paintLine.style = PaintingStyle.stroke;
     paintLine.strokeWidth = 1;
-    canvas.drawLine(Offset(configuration.size.width, configuration.size.height / 6),
-        Offset(configuration.size.width, configuration.size.height - configuration.size.height / 6), paintLine);
+    canvas.drawLine(
+        Offset(configuration.size.width, configuration.size.height / 6),
+        Offset(configuration.size.width,
+            configuration.size.height - configuration.size.height / 6),
+        paintLine);
 
-    final Rect rect = Offset(offset.dx + (configuration.size.width / 6), configuration.size.height / 6) &
+    final Rect rect = Offset(offset.dx + (configuration.size.width / 6),
+            configuration.size.height / 6) &
         Size(configuration.size.width / 1.5, configuration.size.height / 1.5);
     final Paint paint = Paint();
     paint.color = ThemeColor.mainColor;
     paint.style = PaintingStyle.fill;
     paint.strokeWidth = 3;
-    canvas.drawRRect(RRect.fromRectAndRadius(rect, Radius.circular(15.0)), paint);
+    canvas.drawRRect(
+        RRect.fromRectAndRadius(rect, Radius.circular(15.0)), paint);
   }
 }

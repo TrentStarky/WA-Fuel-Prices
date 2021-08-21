@@ -34,10 +34,13 @@ class _FavouritesPageState extends State<FavouritesPage> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (ctx, con) => Consumer<AppState>(builder: (context, state, child) {
+      builder: (ctx, con) =>
+          Consumer<AppState>(builder: (context, state, child) {
         if (state.loading == true) {
           return Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              color: ThemeColor.mainColor,
+            ),
           );
         } else {
           if (state.favouritesList.length == 0) {
@@ -56,7 +59,8 @@ class _FavouritesPageState extends State<FavouritesPage> {
               controller: _refreshController,
               header: ClassicHeader(),
               onRefresh: () async {
-                await Provider.of<AppState>(context, listen: false).refreshPrices();
+                await Provider.of<AppState>(context, listen: false)
+                    .refreshPrices();
                 _refreshController.refreshCompleted();
               },
               child: ListView.builder(
@@ -98,7 +102,8 @@ class FavouriteListItem extends StatefulWidget {
   _FavouriteListItemState createState() => _FavouriteListItemState();
 }
 
-class _FavouriteListItemState extends State<FavouriteListItem> with TickerProviderStateMixin {
+class _FavouriteListItemState extends State<FavouriteListItem>
+    with TickerProviderStateMixin {
   DisplayDay displayDayValue;
   TabController controller;
 
@@ -153,7 +158,10 @@ class _FavouriteListItemState extends State<FavouriteListItem> with TickerProvid
                     padding: EdgeInsets.zero,
                     onPressed: () {
                       Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => SingleFavouritePage(widget.itemInstance)));
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  SingleFavouritePage(widget.itemInstance)));
                     },
                     icon: Icon(
                       Icons.more_vert,
@@ -169,13 +177,16 @@ class _FavouriteListItemState extends State<FavouriteListItem> with TickerProvid
                     Expanded(
                       child: Center(
                         child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                          padding:
+                              EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                           decoration: BoxDecoration(
                               border: Border.all(
-                                color: Resources.productsColors[widget.itemInstance.searchParams.productValue],
+                                color: Resources.productsColors[widget
+                                    .itemInstance.searchParams.productValue],
                                 width: 2,
                               ),
-                              borderRadius: BorderRadius.all(Radius.circular(10))),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
                           child: Text(
                             '${Resources.productsShort[widget.itemInstance.searchParams.productValue]}',
                             style: TextStyle(
@@ -194,7 +205,8 @@ class _FavouriteListItemState extends State<FavouriteListItem> with TickerProvid
                         )),
                     Expanded(
                         child: Center(
-                            child: Text('${Resources.brandsRssToString[widget.itemInstance.searchParams.brandValue]}')))
+                            child: Text(
+                                '${Resources.brandsRssToString[widget.itemInstance.searchParams.brandValue]}')))
                   ],
                 ),
               ),
@@ -246,7 +258,8 @@ class _FavouriteListItemState extends State<FavouriteListItem> with TickerProvid
                     Padding(
                       padding: EdgeInsets.only(top: 4.0),
                       child: Container(
-                        decoration: ShapeDecoration(shape: CircleBorder(side: BorderSide())),
+                        decoration: ShapeDecoration(
+                            shape: CircleBorder(side: BorderSide())),
                         child: (displayDayValue == DisplayDay.today)
                             ? Icon(Icons.keyboard_arrow_up)
                             : Icon(Icons.keyboard_arrow_down),
@@ -293,7 +306,8 @@ class _FavouriteListItemState extends State<FavouriteListItem> with TickerProvid
                     Padding(
                       padding: EdgeInsets.only(top: 4.0),
                       child: Container(
-                        decoration: ShapeDecoration(shape: CircleBorder(side: BorderSide())),
+                        decoration: ShapeDecoration(
+                            shape: CircleBorder(side: BorderSide())),
                         child: (displayDayValue == DisplayDay.tomorrow)
                             ? Icon(Icons.keyboard_arrow_up)
                             : Icon(Icons.keyboard_arrow_down),
@@ -311,7 +325,8 @@ class _FavouriteListItemState extends State<FavouriteListItem> with TickerProvid
                     controller: controller,
                     children: [
                       _createStationDropdown(widget.itemInstance.todayStations),
-                      _createStationDropdown(widget.itemInstance.tomorrowStations),
+                      _createStationDropdown(
+                          widget.itemInstance.tomorrowStations),
                     ],
                   ),
                 )
@@ -365,7 +380,8 @@ class _FavouriteListItemState extends State<FavouriteListItem> with TickerProvid
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   MainStationListTile(stations[0]),
-                  for (int ii = 1; ii < 5 && ii < stations.length; ii++) StationListTile(stations[ii])
+                  for (int ii = 1; ii < 5 && ii < stations.length; ii++)
+                    StationListTile(stations[ii])
                 ],
               )
             : Center(
@@ -395,7 +411,11 @@ class _FavouriteListItemState extends State<FavouriteListItem> with TickerProvid
     }
 
     var textSize = TextSizeCalculator.calculate(
-        'Pq', TextStyle(fontWeight: FontWeight.bold), 1, double.infinity, MediaQuery.textScaleFactorOf(context));
+        'Pq',
+        TextStyle(fontWeight: FontWeight.bold),
+        1,
+        double.infinity,
+        MediaQuery.textScaleFactorOf(context));
 
     return ((textSize.height + 35) * numToRender);
   }
@@ -415,15 +435,25 @@ class StationListTile extends StatelessWidget {
       child: TextButton(
         style: ButtonStyle(
             splashFactory: NoSplash.splashFactory,
-            minimumSize: MaterialStateProperty.all<Size>(Size(double.infinity, 16)),
+            minimumSize:
+                MaterialStateProperty.all<Size>(Size(double.infinity, 16)),
             backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-            shape: MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(
-                side: BorderSide(color: Colors.white), borderRadius: BorderRadius.all(Radius.circular(16))))),
+            shape: MaterialStateProperty.all<OutlinedBorder>(
+                RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.white),
+                    borderRadius: BorderRadius.all(Radius.circular(16))))),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => SingleStationPage(station: station)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SingleStationPage(station: station)));
         },
         child: SizedBox(
-          height: TextSizeCalculator.calculate('Pq', TextStyle(fontWeight: FontWeight.bold), 1, double.infinity,
+          height: TextSizeCalculator.calculate(
+                  'Pq',
+                  TextStyle(fontWeight: FontWeight.bold),
+                  1,
+                  double.infinity,
                   MediaQuery.textScaleFactorOf(context))
               .height,
           child: Padding(
@@ -476,13 +506,22 @@ class MainStationListTile extends StationListTile {
         style: ButtonStyle(
             splashFactory: NoSplash.splashFactory,
             backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-            shape: MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(
-                side: BorderSide(width: 2), borderRadius: BorderRadius.all(Radius.circular(20))))),
+            shape: MaterialStateProperty.all<OutlinedBorder>(
+                RoundedRectangleBorder(
+                    side: BorderSide(width: 2),
+                    borderRadius: BorderRadius.all(Radius.circular(20))))),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => SingleStationPage(station: station)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SingleStationPage(station: station)));
         },
         child: SizedBox(
-          height: TextSizeCalculator.calculate('Pq', TextStyle(fontWeight: FontWeight.bold), 1, double.infinity,
+          height: TextSizeCalculator.calculate(
+                      'Pq',
+                      TextStyle(fontWeight: FontWeight.bold),
+                      1,
+                      double.infinity,
                       MediaQuery.textScaleFactorOf(context))
                   .height +
               5, //20,

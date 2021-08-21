@@ -17,8 +17,17 @@ class FuelStation {
 
   FuelStation._();
 
-  FuelStation(String brand, String date, String price, String tradingName, String locationName, String address,
-      String phone, String latitude, String longitude, String siteFeatures) {
+  FuelStation(
+      String brand,
+      String date,
+      String price,
+      String tradingName,
+      String locationName,
+      String address,
+      String phone,
+      String latitude,
+      String longitude,
+      String siteFeatures) {
     this.brand = brand;
     this.date = date;
     this.price = _ensureDecimal(price);
@@ -36,7 +45,8 @@ class FuelStation {
 
     brand = RssParser().findFirstElement(element, 'brand')?.text;
     date = RssParser().findFirstElement(element, 'date')?.text;
-    price = _ensureDecimal(RssParser().findFirstElement(element, 'price')?.text);
+    price =
+        _ensureDecimal(RssParser().findFirstElement(element, 'price')?.text);
     tradingName = RssParser().findFirstElement(element, 'trading-name')?.text;
     locationName = RssParser().findFirstElement(element, 'location')?.text;
     address = RssParser().findFirstElement(element, 'address')?.text;
