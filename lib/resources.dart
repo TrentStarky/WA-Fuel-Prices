@@ -556,27 +556,27 @@ class Resources {
   ];
 
   ///Firebase Cloud Messaging categories
-  static final String updateFuelPricesCategory = 'UpdateFuelPrices';
+  static const String updateFuelPricesCategory = 'UpdateFuelPrices';
 
   ///RSS strings
-  static final String productString = 'Product';
-  static final String brandString = 'Brand';
-  static final String regionString = 'Region';
-  static final String suburbString = 'Suburb';
-  static final String surroundingString = 'Surrounding';
-  static final String dayString = 'Day';
+  static const String productString = 'Product';
+  static const String brandString = 'Brand';
+  static const String regionString = 'Region';
+  static const String suburbString = 'Suburb';
+  static const String surroundingString = 'Surrounding';
+  static const String dayString = 'Day';
 
   ///Database strings
-  static final String dbFavourites = 'favourites';
-  static final String dbProduct = 'product';
-  static final String dbBrand = 'brand';
-  static final String dbRegion = 'region';
-  static final String dbSuburb = 'suburb';
-  static final String dbIncludeSurrounding = 'include_surrounding';
-  static final String dbPushNotification = 'push_notification';
-  static final String dbFirstRun = 'first_run';
-  static final String dbNotificationsEnabled = 'notifications';
-  static final String dbLastBackgroundRun = 'last_background_run';
+  static const String dbFavourites = 'favourites';
+  static const String dbProduct = 'product';
+  static const String dbBrand = 'brand';
+  static const String dbRegion = 'region';
+  static const String dbSuburb = 'suburb';
+  static const String dbIncludeSurrounding = 'include_surrounding';
+  static const String dbPushNotification = 'push_notification';
+  static const String dbFirstRun = 'first_run';
+  static const String dbNotificationsEnabled = 'notifications';
+  static const String dbLastBackgroundRun = 'last_background_run';
 }
 
 ///EXAMPLE RSS ITEM:

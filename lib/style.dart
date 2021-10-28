@@ -4,36 +4,38 @@ import 'package:flutter/material.dart';
 ///TODO standardise style in app to use themes specified in this file
 
 class ThemeText {
-  static final textPrice = TextStyle(
+  static const textPrice = TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 25,
   );
 
-  static final textNormal = TextStyle(
+  static const textNormal = TextStyle(
     fontWeight: FontWeight.normal,
   );
 
-  static final textBold = TextStyle(
+  static const textBold = TextStyle(
     fontWeight: FontWeight.bold,
     color: Colors.black,
   );
 
-  static final textTileHeader = TextStyle(
+  static const textTileHeader = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.bold,
   );
 
-  static final textStationTitle = TextStyle(
+  static const textStationTitle = TextStyle(
     fontSize: 30,
     fontWeight: FontWeight.bold,
   );
 
-  static final textStationNormal = TextStyle(
+  static const textStationNormal = TextStyle(
     fontSize: 20,
   );
 }
 
 class ThemeColor {
-  static final lightBackground = Color(0xFFEEEEEE);
-  static final mainColor = Color(0xFFc56215);
+  static const lightBackground = Color(0xFFEEEEEE);
+  static const mainColor = Color(0xFFc56215);
+  static const mainColorDark = Color(0xFF944a10);
+  static const deepRed = Color(0xFFbf0006);
 }

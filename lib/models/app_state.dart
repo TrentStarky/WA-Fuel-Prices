@@ -68,7 +68,7 @@ class AppState extends ChangeNotifier {
         .then((stationPrices) {
       favourite.addTodayStations(stationPrices[0]);
       //prevents weird edge case where today prices timeout but tomorrows doesn't and formatting/everything breaks
-      if (stationPrices[0].length != 0) {
+      if (stationPrices[0].isNotEmpty) {
         favourite.addTomorrowStations(stationPrices[1]);
       }
     });

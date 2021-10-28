@@ -3,31 +3,27 @@ import 'package:wa_fuel/resources.dart';
 ///CLASS: SearchParams
 ///Stores information about a search
 class SearchParams {
-  String productValue;
-  String brandValue;
-  String regionValue;
-  String suburbValue;
-  bool includeSurrounding;
-
-  SearchParams._();
+  late String productValue;
+  late String brandValue;
+  late String regionValue;
+  late String suburbValue;
+  late bool includeSurrounding;
 
   SearchParams() {
-    this.productValue = '1';
-    this.brandValue = '0';
-    this.regionValue = '0';
-    this.suburbValue = 'Any Suburb';
-    this.includeSurrounding = false;
+    productValue = '1';
+    brandValue = '0';
+    regionValue = '0';
+    suburbValue = 'Any Suburb';
+    includeSurrounding = false;
   }
 
   SearchParams.fromDatabase(Map databaseMap) {
-    SearchParams._();
-
-    this.productValue = databaseMap['${Resources.dbProduct}'].toString();
-    this.brandValue = databaseMap['${Resources.dbBrand}'].toString();
-    this.regionValue = databaseMap['${Resources.dbRegion}'].toString();
-    this.suburbValue = databaseMap['${Resources.dbSuburb}'].toString();
-    this.includeSurrounding =
-        databaseMap['${Resources.dbIncludeSurrounding}'] == 1 ? true : false;
+    productValue = databaseMap[Resources.dbProduct].toString();
+    brandValue = databaseMap[Resources.dbBrand].toString();
+    regionValue = databaseMap[Resources.dbRegion].toString();
+    suburbValue = databaseMap[Resources.dbSuburb].toString();
+    includeSurrounding =
+        databaseMap[Resources.dbIncludeSurrounding] == 1 ? true : false;
   }
 
   ///Converts SearchParams to a map to be used in RSS url, not setting variables with no change from initial values
@@ -61,10 +57,10 @@ class SearchParams {
 
   ///returns region/suburb string depending on which is set (WA as default)
   String getLocation() {
-    if (this.suburbValue != 'Any Suburb') {
-      return this.suburbValue;
-    } else if (this.regionValue != '0') {
-      return Resources.regionsRssToString[this.regionValue];
+    if (suburbValue != 'Any Suburb') {
+      return suburbValue;
+    } else if (regionValue != '0') {
+      return Resources.regionsRssToString[regionValue]!;
     } else {
       return 'WA';
     }
@@ -73,11 +69,11 @@ class SearchParams {
   SearchParams copy() {
     SearchParams newSearchParams = SearchParams();
 
-    newSearchParams.suburbValue = this.suburbValue;
-    newSearchParams.regionValue = this.regionValue;
-    newSearchParams.includeSurrounding = this.includeSurrounding;
-    newSearchParams.brandValue = this.brandValue;
-    newSearchParams.productValue = this.productValue;
+    newSearchParams.suburbValue = suburbValue;
+    newSearchParams.regionValue = regionValue;
+    newSearchParams.includeSurrounding = includeSurrounding;
+    newSearchParams.brandValue = brandValue;
+    newSearchParams.productValue = productValue;
 
     return newSearchParams;
   }

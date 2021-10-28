@@ -9,17 +9,17 @@ import 'package:wa_fuel/services/rss_parser.dart';
 ///CLASS: FuelWatchService
 ///Gets fuel price data from RSS feed
 class FuelWatchService {
-  static final String baseUrl = 'www.fuelwatch.wa.gov.au';
-  static final String rssPath = '/fuelwatch/fuelWatchRSS';
+  static const String baseUrl = 'www.fuelwatch.wa.gov.au';
+  static const String rssPath = '/fuelwatch/fuelWatchRSS';
+  static final http.Client client = http.Client();
 
   ///Gets today's fuel prices
   static Future<List<FuelStation>> getFuelStationsToday(
       SearchParams searchParams) async {
     try {
-      final client = http.Client();
       final response = await client
           .get(Uri.https(baseUrl, rssPath, searchParams.toMap()))
-          .timeout(Duration(seconds: 5));
+          .timeout(const Duration(seconds: 5));
 
       final feed = RssParser().parse(response.body);
 
@@ -38,14 +38,13 @@ class FuelWatchService {
   static Future<List<FuelStation>> getFuelStationsTomorrow(
       SearchParams searchParams) async {
     try {
-      final client = http.Client();
       final response = await client
           .get(Uri.https(
               baseUrl,
               rssPath,
               searchParams.toMap()
                 ..putIfAbsent(Resources.dayString, () => 'tomorrow')))
-          .timeout(Duration(seconds: 5));
+          .timeout(const Duration(seconds: 5));
 
       final feed = RssParser().parse(response.body);
 

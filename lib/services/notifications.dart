@@ -15,9 +15,9 @@ class Notifications {
     FlutterLocalNotificationsPlugin notificationsPlugin =
         FlutterLocalNotificationsPlugin();
     AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('ic_fuel');
+        const AndroidInitializationSettings('ic_fuel');
     IOSInitializationSettings initializationSettingsIOS =
-        IOSInitializationSettings(
+        const IOSInitializationSettings(
             onDidReceiveLocalNotification: onDidReceiveLocalNotification);
     InitializationSettings initializationSettings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
@@ -45,8 +45,8 @@ class Notifications {
 
       if (favourite[Resources.dbPushNotification] == 2) {
         try {
-          if (double.parse(favouriteInstance.todayPrice) >=
-              double.parse(favouriteInstance.tomorrowPrice)) {
+          if (favouriteInstance.todayBestPrice! >=
+              favouriteInstance.tomorrowBestPrice!) {
             continue;
           }
         } catch (_) {}
@@ -56,9 +56,9 @@ class Notifications {
           notificationsPlugin,
           notificationIndex,
           favouriteInstance.searchParams.getLocation(),
-          Resources.productsShort[favouriteInstance.searchParams.productValue],
-          favouriteInstance.todayPrice,
-          favouriteInstance.tomorrowPrice);
+          Resources.productsShort[favouriteInstance.searchParams.productValue]!,
+          '${favouriteInstance.todayBestPrice!}',
+          '${favouriteInstance.tomorrowBestPrice!}');
 
       notificationIndex++;
     }
@@ -70,7 +70,7 @@ class Notifications {
   }
 
   static Future onDidReceiveLocalNotification(
-      int id, String title, String body, String payload) async {
+      int id, String? title, String? body, String? payload) async {
     //do nothing
 
     // showDialog(context: context, builder: (BuildContext context) => CupertinoAlertDialog(

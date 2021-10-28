@@ -8,7 +8,7 @@ class TrianglePainter extends CustomPainter {
   final Color fillColor;
   final bool inversion;
 
-  TrianglePainter({this.fillColor, this.inversion});
+  TrianglePainter({required this.fillColor, required this.inversion});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -52,7 +52,7 @@ class TrianglePainter extends CustomPainter {
 class DashPainter extends CustomPainter {
   final Color fillColor;
 
-  DashPainter({this.fillColor});
+  DashPainter({required this.fillColor});
 
   @override
   void paint(Canvas canvas, Size size) {

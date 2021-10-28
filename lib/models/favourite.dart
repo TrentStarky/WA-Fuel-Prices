@@ -6,33 +6,27 @@ import '../resources.dart';
 ///CLASS: FavouriteInfoItem
 ///Stores the data obtained from RSS feed using favourited parameters
 class Favourite {
-  SearchParams searchParams;
-  List<FuelStation> todayStations;
-  List<FuelStation> tomorrowStations;
-  String todayPrice;
-  String tomorrowPrice;
-  ChangeIcon changeIcon;
-
-  Favourite._();
+  SearchParams searchParams = SearchParams();
+  List<FuelStation> todayStations = [];
+  List<FuelStation> tomorrowStations = [];
+  double? todayBestPrice;
+  double? tomorrowBestPrice;
+  ChangeIcon? changeIcon;
 
   Favourite.fromDatabase(Map databaseMap) {
-    Favourite._();
-    this.searchParams = SearchParams.fromDatabase(databaseMap);
+    searchParams = SearchParams.fromDatabase(databaseMap);
   }
 
-  Favourite.fromSearchParams(SearchParams searchParams) {
-    Favourite._();
-    this.searchParams = searchParams;
-  }
+  Favourite.fromSearchParams(this.searchParams);
 
   ///Updates station list, today price and icon if possible
-  void addTodayStations(List<FuelStation> todayStations) {
+  void addTodayStations(List<FuelStation>? todayStations) {
     if (todayStations != null) {
       this.todayStations = todayStations;
-      if (todayStations.length != 0) {
-        todayPrice = todayStations[0].price;
+      if (todayStations.isNotEmpty) {
+        todayBestPrice = todayStations[0].price;
       } else {
-        todayPrice = '---.-';
+        todayBestPrice = null;
       }
     } else {
       this.todayStations = [];
@@ -41,13 +35,13 @@ class Favourite {
   }
 
   ///Updates station list, tomorrow price and icon if possible
-  void addTomorrowStations(List<FuelStation> tomorrowStations) {
+  void addTomorrowStations(List<FuelStation>? tomorrowStations) {
     if (tomorrowStations != null) {
       this.tomorrowStations = tomorrowStations;
-      if (tomorrowStations.length != 0) {
-        tomorrowPrice = tomorrowStations[0].price;
+      if (tomorrowStations.isNotEmpty) {
+        tomorrowBestPrice = tomorrowStations[0].price;
       } else {
-        tomorrowPrice = '---.-';
+        tomorrowBestPrice = null;
       }
     } else {
       this.tomorrowStations = [];
@@ -57,18 +51,17 @@ class Favourite {
 
   ///If today and tomorrow prices are set then set the change icon
   void _updateChangeIcon() {
-    if (this.todayPrice == null ||
-        this.tomorrowPrice == null ||
-        this.todayPrice == '---.-' ||
-        this.tomorrowPrice == '---.-') {
-      this.changeIcon = null;
+    if (todayBestPrice == null ||
+        tomorrowBestPrice == null) {
+      changeIcon = null;
     } else {
-      if (double.tryParse(todayPrice) > double.tryParse(tomorrowPrice)) {
-        this.changeIcon = ChangeIcon.down;
-      } else if (double.tryParse(todayPrice) < double.tryParse(tomorrowPrice)) {
-        this.changeIcon = ChangeIcon.up;
+      //todo floating point comparisons are bad, do (difference < 0.001) or something
+      if (todayBestPrice! > tomorrowBestPrice!) {
+        changeIcon = ChangeIcon.down;
+      } else if (todayBestPrice! < tomorrowBestPrice!) {
+        changeIcon = ChangeIcon.up;
       } else {
-        this.changeIcon = ChangeIcon.steady;
+        changeIcon = ChangeIcon.steady;
       }
     }
   }

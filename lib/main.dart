@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:background_fetch/background_fetch.dart';
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -11,19 +12,21 @@ import 'package:wa_fuel/services/notifications.dart';
 import 'package:wa_fuel/style.dart';
 
 import 'models/app_state.dart';
-import 'screens/home_page.dart';
+import 'screens/home/home_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(MyApp());
+  runApp(const MyApp());
 
   BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
-  _MyAppState createState() => new _MyAppState();
+  _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -85,12 +88,53 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
             primaryColor: ThemeColor.mainColor,
-            accentColor: ThemeColor.mainColor,
+            colorScheme: const ColorScheme(
+              primary: ThemeColor.mainColor,
+              primaryVariant: ThemeColor.mainColorDark,
+              secondary: ThemeColor.mainColor,
+              secondaryVariant: ThemeColor.mainColorDark,
+              surface: ThemeColor.lightBackground,
+              background: ThemeColor.lightBackground,
+              error: Colors.red,
+              onPrimary: Colors.white,
+              onSecondary: Colors.white,
+              onSurface: Colors.black,
+              onBackground: Colors.black,
+              onError: Colors.white,
+              brightness: Brightness.light,
+            ),
             textButtonTheme: TextButtonThemeData(
                 style: ButtonStyle(
               foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-            ))),
-        home: HomePage(),
+            )),
+          switchTheme: SwitchThemeData(
+            thumbColor: MaterialStateProperty.resolveWith((materialStateSet) {
+              if (materialStateSet.contains(MaterialState.selected)) {
+                return ThemeColor.mainColor;
+              }
+            }),
+              trackColor: MaterialStateProperty.resolveWith((materialStateSet) {
+                if (materialStateSet.contains(MaterialState.selected)) {
+                  return ThemeColor.mainColor.withAlpha(70);
+                }
+              }),
+          ),
+          radioTheme: RadioThemeData(
+            fillColor: MaterialStateProperty.resolveWith((materialStateSet) {
+              if (materialStateSet.contains(MaterialState.selected)) {
+                return ThemeColor.mainColor;
+              }
+            }),
+          ),
+          checkboxTheme: CheckboxThemeData(
+            fillColor: MaterialStateProperty.resolveWith((materialStateSet) {
+              if (materialStateSet.contains(MaterialState.selected)) {
+                return ThemeColor.mainColor;
+              }
+            }),
+          ),
+        ),
+        home: const HomePage(),
       ),
     );
   }
@@ -99,17 +143,15 @@ class _MyAppState extends State<MyApp> {
 ///Checks if need to get data and send notification (after 2:30pm once daily)
 Future<bool> needToRunBackgroundTasks() async {
   DateTime timeNow = DateTime.now();
-  DateTime timeToRun =
-      DateTime(timeNow.year, timeNow.month, timeNow.day, 14, 30);
-  int lastRunMilliseconds;
+  DateTime timeToRun = DateTime(timeNow.year, timeNow.month, timeNow.day, 14, 30);
+  int? lastRunMilliseconds;
   var prefs = await SharedPreferences.getInstance();
   try {
     lastRunMilliseconds = prefs.getInt(Resources.dbLastBackgroundRun);
     //For first run after install
     if (lastRunMilliseconds == null) {
       if (timeNow.isAfter(timeToRun)) {
-        prefs.setInt(
-            Resources.dbLastBackgroundRun, timeNow.millisecondsSinceEpoch);
+        prefs.setInt(Resources.dbLastBackgroundRun, timeNow.millisecondsSinceEpoch);
         return true;
       } else {
         return false;
@@ -119,7 +161,7 @@ Future<bool> needToRunBackgroundTasks() async {
     print(_);
   }
 
-  DateTime lastRun = DateTime.fromMillisecondsSinceEpoch(lastRunMilliseconds);
+  DateTime lastRun = DateTime.fromMillisecondsSinceEpoch(lastRunMilliseconds!);
 
   if (timeNow.isAfter(timeToRun) && lastRun.isBefore(timeToRun)) {
     prefs.setInt(Resources.dbLastBackgroundRun, timeNow.millisecondsSinceEpoch);

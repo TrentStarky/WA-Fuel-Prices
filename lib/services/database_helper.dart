@@ -7,7 +7,7 @@ import '../resources.dart';
 ///CLASS: DBHelper
 ///Handles opening and providing the database to the app
 class DBHelper {
-  Database _favouritesDatabase;
+  Database? _favouritesDatabase;
   static final DBHelper _instance = DBHelper._();
 
   DBHelper._();
@@ -18,7 +18,7 @@ class DBHelper {
 
   ///Opens database or returns already open database
   Future<Database> getFavouritesDatabase() async {
-    if (this._favouritesDatabase == null) {
+    if (_favouritesDatabase == null) {
       var databasePath = await getDatabasesPath();
       String path = databasePath + 'favourites_db.db';
 
@@ -33,9 +33,9 @@ class DBHelper {
             'CREATE TABLE ${Resources.dbFavourites} (id INTEGER PRIMARY KEY, ${Resources.dbProduct} INTEGER, ${Resources.dbBrand} INTEGER, ${Resources.dbRegion} INTEGER, ${Resources.dbSuburb} STRING, ${Resources.dbIncludeSurrounding} INTEGER, ${Resources.dbNotificationsEnabled} INTEGER, ${Resources.dbPushNotification} INTEGER)');
       });
 
-      this._favouritesDatabase = database;
+      _favouritesDatabase = database;
     }
 
-    return this._favouritesDatabase;
+    return _favouritesDatabase!;
   }
 }

@@ -11,42 +11,40 @@ class RssParser {
     if (rss == null && rdf == null) {
       throw ArgumentError('not a rss feed');
     }
-    var channelElement = findFirstElement(rss ?? rdf, 'channel');
+    var channelElement = findFirstElement(rss!, 'channel');
     if (channelElement == null) {
       throw ArgumentError('channel not found');
     }
-    return (rss != null ? channelElement : rdf)
+    return channelElement
         .findElements('item')
         .map((e) => FuelStation.fromRssFeed(e))
         .toList();
   }
 
-  XmlElement findFirstElement(
+  XmlElement? findFirstElement(
     XmlNode node,
     String name, {
     bool recursive = false,
-    String namespace,
   }) {
     try {
       return findElements(node, name,
-              recursive: recursive, namespace: namespace)
-          ?.first;
+              recursive: recursive)!
+          .first;
     } on StateError {
       return null;
     }
   }
 
-  Iterable<XmlElement> findElements(
+  Iterable<XmlElement>? findElements(
     XmlNode node,
     String name, {
     bool recursive = false,
-    String namespace,
   }) {
     try {
       if (recursive) {
-        return node.findAllElements(name, namespace: namespace);
+        return node.findAllElements(name);
       } else {
-        return node.findElements(name, namespace: namespace);
+        return node.findElements(name);
       }
     } on StateError {
       return null;
@@ -54,7 +52,7 @@ class RssParser {
   }
 
   bool parseBoolLiteral(XmlElement element, String tagName) {
-    var v = findFirstElement(element, tagName)?.text?.toLowerCase()?.trim();
+    var v = findFirstElement(element, tagName)?.text.toLowerCase().trim();
     if (v == null) return false;
     return ['yes', 'true'].contains(v);
   }
