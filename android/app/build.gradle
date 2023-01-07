@@ -49,7 +49,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        manifestPlaceholders = [googleMapsAPIKey:localProperties.getProperty('googleMapsAPIKey')]
+        manifestPlaceholders += [googleMapsAPIKey:localProperties.getProperty('googleMapsAPIKey')]
     }
 
     signingConfigs {
